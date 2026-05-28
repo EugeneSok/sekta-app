@@ -1,0 +1,13 @@
+name = "sekta-app"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+[vars]
+# Дозволені GitHub-логіни (через кому, без пробілів):
+ALLOWED_USERS = "EugeneSok"
+# Отримай після створення GitHub OAuth App:
+GITHUB_CLIENT_ID = "REPLACE_WITH_CLIENT_ID"
+
+# Секрети — встановлюються через термінал (НЕ зберігати тут!):
+#   wrangler secret put GITHUB_CLIENT_SECRET
+#   wrangler secret put SESSION_SECRET
