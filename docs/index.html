@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sekta — захищений моніторинг мережі">
+  <title>Sekta — Завантаження</title>
+  <link rel="icon" type="image/png" href="./logo.png">
+  <style>
+    :root {
+      --bg0:         #0B0F14;
+      --bg1:         #0F1419;
+      --bg2:         #161B22;
+      --bg-elev:     #1A1E26;
+      --border:      #2A3040;
+      --border-soft: #1A2030;
+      --text:        #E2E8F0;
+      --text-dim:    #94A3B8;
+      --text-muted:  #64748B;
+      --text-subtle: #475569;
+      --accent:      #2563EB;
+      --accent-dim:  #1E40AF;
+      --green:       #16A34A;
+      --red:         #DC2626;
+      --yellow:      #F59E0B;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg1);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    /* ── Topo canvas ─────────────────────────────── */
+    #topo {
+      position: fixed;
+      inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Lock screen ─────────────────────────────── */
+    #lock-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: var(--bg0);
+    }
+
+    #lock-screen.hidden { display: none; }
+
+    .lock-logo {
+      position: relative;
+      margin-bottom: 32px;
+    }
+
+    .lock-logo::before {
+      content: '';
+      position: absolute;
+      inset: -24px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(37,99,235,.2) 0%, transparent 70%);
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    .lock-logo img {
+      width: 80px; height: 80px;
+      border-radius: 18px;
+      position: relative;
+      box-shadow: 0 0 40px rgba(37,99,235,.3), 0 8px 24px rgba(0,0,0,.6);
+    }
+
+    .lock-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 6px;
+      background: linear-gradient(135deg, var(--text) 0%, var(--text-dim) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .lock-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+    }
+
+    .lock-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      width: 100%;
+      max-width: 360px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .lock-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .password-wrap {
+      position: relative;
+    }
+
+    .password-input {
+      width: 100%;
+      background: var(--bg0);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 44px 12px 14px;
+      font-size: 15px;
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s;
+      font-family: inherit;
+    }
+
+    .password-input:focus { border-color: var(--accent); }
+    .password-input.error { border-color: var(--red); animation: shake .35s ease; }
+
+    @keyframes shake {
+      0%,100%{transform:translateX(0)}
+      20%    {transform:translateX(-8px)}
+      60%    {transform:translateX(8px)}
+      80%    {transform:translateX(-4px)}
+    }
+
+    .toggle-eye {
+      position: absolute;
+      right: 12px; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none;
+      cursor: pointer; padding: 4px;
+      color: var(--text-muted);
+      transition: color .2s;
+    }
+    .toggle-eye:hover { color: var(--text-dim); }
+
+    .error-msg {
+      font-size: 13px;
+      color: var(--red);
+      min-height: 18px;
+      transition: opacity .2s;
+    }
+
+    .btn-enter {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 13px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .18s, transform .12s;
+      font-family: inherit;
+    }
+
+    .btn-enter:hover  { background: #1d4ed8; }
+    .btn-enter:active { transform: scale(.97); }
+    .btn-enter:disabled { background: var(--bg-elev); color: var(--text-muted); cursor: default; }
+
+    .remember-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .remember-row input[type=checkbox] {
+      width: 16px; height: 16px;
+      accent-color: var(--accent);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .remember-row label {
+      font-size: 13px;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* ── Page (main content) ─────────────────────── */
+    .page {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 960px;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── Header ──────────────────────────────────── */
+    header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 0 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .brand img { width: 32px; height: 32px; border-radius: 8px; }
+
+    .brand-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-logout {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      transition: border-color .2s, color .2s;
+    }
+    .btn-logout:hover { border-color: var(--text-muted); color: var(--text-dim); }
+
+    /* ── Hero ────────────────────────────────────── */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 72px 0 56px;
+    }
+
+    .logo-wrap {
+      position: relative;
+      margin-bottom: 24px;
+    }
+
+    .logo-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -20px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(37,99,235,.22) 0%, transparent 70%);
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50%      { opacity:.6; transform:scale(1.08); }
+    }
+
+    .logo-wrap img {
+      width: 88px; height: 88px;
+      border-radius: 20px;
+      position: relative;
+      box-shadow: 0 0 40px rgba(37,99,235,.35), 0 8px 32px rgba(0,0,0,.6);
+    }
+
+    .hero h1 {
+      font-size: 44px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      background: linear-gradient(135deg, var(--text) 0%, var(--text-dim) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      font-size: 15px;
+      color: var(--text-dim);
+      max-width: 400px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .version-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 13px;
+      color: var(--text-dim);
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    .version-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%,100% { opacity:1; }
+      50%      { opacity:.3; }
+    }
+
+    /* ── Cards ───────────────────────────────────── */
+    .cards {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 72px;
+    }
+
+    @media (max-width: 680px) {
+      .cards { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 32px; }
+    }
+
+    @media (max-width: 900px) and (min-width: 681px) {
+      .cards { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .card {
+      background: rgba(22,27,34,.82);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 26px 22px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: border-color .2s, transform .2s, box-shadow .2s;
+    }
+
+    .card:hover {
+      border-color: rgba(37,99,235,.5);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 40px rgba(0,0,0,.4), 0 0 0 1px rgba(37,99,235,.1);
+    }
+
+    .card-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-icon svg { width: 28px; height: 28px; }
+    .card-icon.win { background: rgba(37,99,235,.15); }
+    .card-icon.and { background: rgba(22,163,74,.15); }
+    .card-icon.mac { background: rgba(148,163,184,.1); }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .card-note {
+      font-size: 11px;
+      color: var(--text-muted);
+      background: var(--bg0);
+      border: 1px solid var(--border-soft);
+      border-radius: 6px;
+      padding: 6px 10px;
+      line-height: 1.4;
+    }
+
+    .card-note span { color: var(--yellow); font-weight: 600; }
+
+    .btn-download {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 10px;
+      padding: 11px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background .18s, transform .12s;
+    }
+
+    .btn-download:hover  { background: #1d4ed8; }
+    .btn-download:active { transform: scale(.97); }
+
+    .btn-download.loading {
+      background: var(--bg-elev);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .file-size {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: -6px;
+    }
+
+    /* ── Footer ──────────────────────────────────── */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border), transparent);
+      margin-bottom: 28px;
+    }
+
+    footer {
+      padding: 0 0 36px;
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    footer a { color: var(--text-muted); text-decoration: none; transition: color .2s; }
+    footer a:hover { color: var(--text-dim); }
+
+    .spinner {
+      width: 15px; height: 15px;
+      border: 2px solid rgba(255,255,255,.25);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<canvas id="topo"></canvas>
+
+<!-- ── Lock screen ────────────────────────────────────────────────────── -->
+<div id="lock-screen">
+  <div class="lock-logo">
+    <img src="./logo.png" alt="Sekta">
+  </div>
+  <div class="lock-title">Sekta</div>
+  <div class="lock-subtitle">Введіть пароль для доступу</div>
+
+  <div class="lock-card">
+    <div class="lock-label">Пароль</div>
+
+    <div class="password-wrap">
+      <input id="pwd-input" class="password-input" type="password"
+             placeholder="••••••••" autocomplete="current-password">
+      <button class="toggle-eye" id="toggle-eye" type="button" tabindex="-1" aria-label="Показати пароль">
+        <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="error-msg" id="error-msg"></div>
+
+    <div class="remember-row">
+      <input type="checkbox" id="remember" checked>
+      <label for="remember">Запам'ятати на цьому пристрої</label>
+    </div>
+
+    <button class="btn-enter" id="btn-enter" type="button">
+      Увійти
+    </button>
+  </div>
+</div>
+
+<!-- ── Main page ──────────────────────────────────────────────────────── -->
+<div class="page" id="main-page" style="display:none">
+
+  <header>
+    <a href="." class="brand">
+      <img src="./logo.png" alt="Sekta logo">
+      <span class="brand-name">Sekta</span>
+    </a>
+    <div class="header-right">
+      <button class="btn-logout" id="btn-logout" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Вийти
+      </button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="logo-wrap">
+      <img src="./logo.png" alt="Sekta">
+    </div>
+    <h1>Sekta</h1>
+    <p>Захищений моніторинг мережі. Один застосунок — Windows, Android та macOS.</p>
+    <div class="version-badge">
+      <div class="version-dot"></div>
+      <span id="version-label">Завантаження...</span>
+    </div>
+  </section>
+
+  <div class="cards">
+
+    <!-- Windows -->
+    <div class="card">
+      <div class="card-icon win">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M3 5.6L10.5 4.5V11.5H3V5.6Z" fill="#2563EB"/>
+          <path d="M11.5 4.35L21 3V11.5H11.5V4.35Z" fill="#2563EB"/>
+          <path d="M3 12.5H10.5V19.5L3 18.4V12.5Z" fill="#2563EB"/>
+          <path d="M11.5 12.5H21V21L11.5 19.65V12.5Z" fill="#2563EB"/>
+        </svg>
+      </div>
+      <div>
+        <div class="card-title">Windows</div>
+        <div class="card-desc">ZIP-архів. Розпакуй та запусти <code style="color:var(--text-dim);font-size:12px">Sekta.exe</code>. Потребує Windows 10/11 та WebView2 Runtime.</div>
+      </div>
+      <div class="card-note"><span>⚠</span> Якщо Windows блокує запуск — «Детальніше» → «Запустити».</div>
+      <a id="dl-windows" class="btn-download loading" href="#" target="_blank">
+        <span class="spinner" id="sp-windows"></span>
+        <span id="lbl-windows">Завантаження...</span>
+      </a>
+      <div class="file-size" id="sz-windows"></div>
+    </div>
+
+    <!-- Android -->
+    <div class="card">
+      <div class="card-icon and">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M6 18C6 18.55 6.45 19 7 19H8V22C8 22.55 8.45 23 9 23S10 22.55 10 22V19H14V22C14 22.55 14.45 23 15 23S16 22.55 16 22V19H17C17.55 19 18 18.55 18 18V9H6V18ZM3.5 9C2.67 9 2 9.67 2 10.5V17.5C2 18.33 2.67 19 3.5 19S5 18.33 5 17.5V10.5C5 9.67 4.33 9 3.5 9ZM20.5 9C19.67 9 19 9.67 19 10.5V17.5C19 18.33 19.67 19 20.5 19S22 18.33 22 17.5V10.5C22 9.67 21.33 9 20.5 9ZM15.53 2.16L16.84.85C17.03.66 17.03.38 16.84.19 16.65 0 16.37 0 16.18.19L14.7 1.67C13.83 1.25 12.94 1 12 1S10.17 1.25 9.3 1.67L7.82.19C7.63 0 7.35 0 7.16.19 6.97.38 6.97.66 7.16.85L8.47 2.16C6.97 3.07 6 4.62 6 6.5V7H18V6.5C18 4.62 17.03 3.07 15.53 2.16ZM10 5H9V4H10V5ZM15 5H14V4H15V5Z" fill="#16A34A"/>
+        </svg>
+      </div>
+      <div>
+        <div class="card-title">Android</div>
+        <div class="card-desc">APK-файл для прямого встановлення. Android 6.0+.</div>
+      </div>
+      <div class="card-note"><span>⚠</span> Увімкни «Встановлення з невідомих джерел» перед встановленням.</div>
+      <a id="dl-android" class="btn-download loading" href="#" target="_blank">
+        <span class="spinner" id="sp-android"></span>
+        <span id="lbl-android">Завантаження...</span>
+      </a>
+      <div class="file-size" id="sz-android"></div>
+    </div>
+
+    <!-- macOS -->
+    <div class="card">
+      <div class="card-icon mac">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 22C7.78 22.05 6.8 20.68 5.96 19.47C4.25 17 2.94 12.45 4.7 9.39C5.57 7.87 7.13 6.91 8.82 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z" fill="#94A3B8"/>
+        </svg>
+      </div>
+      <div>
+        <div class="card-title">macOS</div>
+        <div class="card-desc">ZIP із <code style="color:var(--text-dim);font-size:12px">Sekta.app</code>. Розпакуй та перемісти у папку «Програми». macOS 12+.</div>
+      </div>
+      <div class="card-note"><span>⚠</span> Якщо macOS блокує — клікни правою кнопкою → «Відкрити».</div>
+      <a id="dl-macos" class="btn-download loading" href="#" target="_blank">
+        <span class="spinner" id="sp-macos"></span>
+        <span id="lbl-macos">Завантаження...</span>
+      </a>
+      <div class="file-size" id="sz-macos"></div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <footer>
+    <span>Sekta · Внутрішній реліз</span>
+    <a href="https://github.com/EugeneSok/sekta-app/releases" target="_blank" rel="noopener">Усі версії на GitHub →</a>
+  </footer>
+
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// CONFIG — change PASSWORD_HASH to lock with a different password.
+// Generate new hash: https://emn178.github.io/online-tools/sha256.html
+// Current password: Omega
+// ─────────────────────────────────────────────────────────────────────────────
+const PASSWORD_HASH = '1c945ea0c6e24c67616f6aa99f7239bc3fc520a39aa573790a61289a72a9e799';
+const STORAGE_KEY   = 'sekta_auth_v1';
+const REPO          = 'EugeneSok/sekta-app';
+
+// ── Auth ─────────────────────────────────────────────────────────────────────
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+function isAuthenticated() {
+  return localStorage.getItem(STORAGE_KEY) === 'ok' ||
+         sessionStorage.getItem(STORAGE_KEY) === 'ok';
+}
+
+function setAuthenticated(remember) {
+  (remember ? localStorage : sessionStorage).setItem(STORAGE_KEY, 'ok');
+}
+
+function clearAuth() {
+  localStorage.removeItem(STORAGE_KEY);
+  sessionStorage.removeItem(STORAGE_KEY);
+}
+
+async function tryLogin() {
+  const input    = document.getElementById('pwd-input');
+  const errorEl  = document.getElementById('error-msg');
+  const btn      = document.getElementById('btn-enter');
+  const remember = document.getElementById('remember').checked;
+
+  const pwd = input.value;
+  if (!pwd) return;
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Перевірка...';
+  errorEl.textContent = '';
+
+  const hash = await sha256(pwd);
+
+  if (hash === PASSWORD_HASH) {
+    setAuthenticated(remember);
+    showMainPage();
+  } else {
+    input.classList.add('error');
+    setTimeout(() => input.classList.remove('error'), 400);
+    errorEl.textContent = 'Невірний пароль. Спробуй ще раз.';
+    input.value = '';
+    btn.disabled = false;
+    btn.textContent = 'Увійти';
+    input.focus();
+  }
+}
+
+function showMainPage() {
+  document.getElementById('lock-screen').classList.add('hidden');
+  document.getElementById('main-page').style.display = '';
+  loadRelease();
+}
+
+// ── Eye toggle ───────────────────────────────────────────────────────────────
+document.getElementById('toggle-eye').addEventListener('click', () => {
+  const input = document.getElementById('pwd-input');
+  const icon  = document.getElementById('eye-icon');
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+  } else {
+    input.type = 'password';
+    icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  }
+});
+
+// ── Keyboard ─────────────────────────────────────────────────────────────────
+document.getElementById('pwd-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') tryLogin();
+});
+
+document.getElementById('btn-enter').addEventListener('click', tryLogin);
+
+document.getElementById('btn-logout').addEventListener('click', () => {
+  clearAuth();
+  location.reload();
+});
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+if (isAuthenticated()) {
+  showMainPage();
+} else {
+  document.getElementById('lock-screen').style.display = '';
+  setTimeout(() => document.getElementById('pwd-input').focus(), 50);
+}
+
+// ── GitHub Releases ───────────────────────────────────────────────────────────
+function fmt(bytes) {
+  if (!bytes) return '';
+  return bytes < 1048576
+    ? (bytes/1024).toFixed(0)+' KB'
+    : (bytes/1048576).toFixed(1)+' MB';
+}
+
+function setReady(id, url, name, size) {
+  const btn = document.getElementById('dl-'+id);
+  const lbl = document.getElementById('lbl-'+id);
+  const sp  = document.getElementById('sp-'+id);
+  const sz  = document.getElementById('sz-'+id);
+  btn.href  = url;
+  btn.classList.remove('loading');
+  lbl.textContent = name;
+  if (sp) sp.remove();
+  if (size) sz.textContent = fmt(size);
+}
+
+function setError(id) {
+  const btn = document.getElementById('dl-'+id);
+  const sp  = document.getElementById('sp-'+id);
+  const lbl = document.getElementById('lbl-'+id);
+  if (sp) sp.remove();
+  btn.classList.remove('loading');
+  lbl.textContent = 'Відкрити реліз';
+  btn.href = `https://github.com/${REPO}/releases/latest`;
+}
+
+function loadRelease() {
+  fetch(`https://api.github.com/repos/${REPO}/releases/latest`)
+    .then(r => { if (!r.ok) throw r.status; return r.json(); })
+    .then(release => {
+      document.getElementById('version-label').textContent = release.tag_name || '—';
+      const a = release.assets || [];
+      const w = a.find(x => x.name.includes('windows'));
+      const d = a.find(x => x.name.includes('android'));
+      const m = a.find(x => x.name.includes('macos'));
+      if (w) setReady('windows', w.browser_download_url, w.name, w.size); else setError('windows');
+      if (d) setReady('android', d.browser_download_url, d.name, d.size); else setError('android');
+      if (m) setReady('macos',   m.browser_download_url, m.name, m.size); else setError('macos');
+    })
+    .catch(() => {
+      document.getElementById('version-label').textContent = 'Помилка';
+      ['windows','android','macos'].forEach(setError);
+    });
+}
+
+// ── Topo canvas ───────────────────────────────────────────────────────────────
+(function() {
+  const cv = document.getElementById('topo');
+  const cx = cv.getContext('2d');
+  const base = Array.from({length:256},(_,i)=>i);
+  let seed = 12345;
+  const rng = () => { seed=(Math.imul(seed,1664525)+1013904223)|0; return(seed>>>0)/0x100000000; };
+  for(let i=255;i>0;i--){const j=Math.floor(rng()*(i+1));[base[i],base[j]]=[base[j],base[i]];}
+  const P=[...base,...base];
+  const fade=t=>t*t*t*(t*(t*6-15)+10);
+  const lerp=(a,b,t)=>a+t*(b-a);
+  const grad=(h,x,y)=>{const v=h&3,u=v<2?x:y,w=v<2?y:x;return((h&1)?-u:u)+((h&2)?-w:w);};
+  function noise(xi,yi){
+    const X=Math.floor(xi)&255,Y=Math.floor(yi)&255;
+    const xf=xi-Math.floor(xi),yf=yi-Math.floor(yi);
+    const u=fade(xf),v=fade(yf),a=P[X]+Y,b=P[X+1]+Y;
+    return lerp(lerp(grad(P[a],xf,yf),grad(P[b],xf-1,yf),u),lerp(grad(P[a+1],xf,yf-1),grad(P[b+1],xf-1,yf-1),u),v);
+  }
+  function fbm(x,y){let v=0,a=1,f=1,m=0;for(let i=0;i<3;i++){v+=a*noise(x*f+22.8,y*f+15.1);m+=a;a*=0.45;f*=1.7;}return v/m;}
+  function elev(nx,ny){return Math.max(0,Math.min(1,(fbm(nx,ny)+0.8)/1.2));}
+  function draw(){
+    const W=window.innerWidth,H=window.innerHeight;
+    cv.width=W;cv.height=H;
+    cx.fillStyle='#0F1419';cx.fillRect(0,0,W,H);
+    const gx=120,gy=Math.max(160,Math.round(H/W*gx));
+    const g=new Float32Array((gx+1)*(gy+1));
+    for(let j=0;j<=gy;j++)for(let i=0;i<=gx;i++)g[j*(gx+1)+i]=elev(i/gx,j/gy);
+    const cw=W/gx,ch=H/gy;
+    for(let l=1;l<22;l++){
+      const t=l/22,isI=l%5===0;
+      cx.beginPath();
+      cx.strokeStyle=`rgba(37,99,235,${isI?.55:.28})`;
+      cx.lineWidth=isI?1.5:.9;
+      for(let j=0;j<gy;j++){for(let i=0;i<gx;i++){
+        const v00=g[j*(gx+1)+i],v10=g[j*(gx+1)+i+1],v01=g[(j+1)*(gx+1)+i],v11=g[(j+1)*(gx+1)+i+1];
+        const x=i*cw,y=j*ch,lr=(a,b)=>b===a?0:(t-a)/(b-a),pts=[];
+        if((v00>t)!==(v10>t))pts.push([x+lr(v00,v10)*cw,y]);
+        if((v10>t)!==(v11>t))pts.push([x+cw,y+lr(v10,v11)*ch]);
+        if((v01>t)!==(v11>t))pts.push([x+lr(v01,v11)*cw,y+ch]);
+        if((v00>t)!==(v01>t))pts.push([x,y+lr(v00,v01)*ch]);
+        if(pts.length>=2){cx.moveTo(pts[0][0],pts[0][1]);cx.lineTo(pts[1][0],pts[1][1]);}
+        if(pts.length===4){cx.moveTo(pts[2][0],pts[2][1]);cx.lineTo(pts[3][0],pts[3][1]);}
+      }}
+      cx.stroke();
+    }
+    cx.setLineDash([2,10]);cx.strokeStyle='rgba(37,99,235,0.11)';cx.lineWidth=0.5;
+    for(let n=1;n<=3;n++){
+      cx.beginPath();cx.moveTo(W*n/4,0);cx.lineTo(W*n/4,H);cx.stroke();
+      cx.beginPath();cx.moveTo(0,H*n/4);cx.lineTo(W,H*n/4);cx.stroke();
+    }
+    cx.setLineDash([]);
+  }
+  draw();
+  window.addEventListener('resize',()=>{clearTimeout(window._t);window._t=setTimeout(draw,150);});
+})();
+</script>
+</body>
+</html>
