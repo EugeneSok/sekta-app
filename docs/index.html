@@ -6,23 +6,29 @@
   <meta name="description" content="Sekta — захищений портал підрозділу">
   <title>Sekta</title>
   <link rel="icon" type="image/png" href="./logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Space+Mono&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg0:         #0B0F14;
-      --bg1:         #0F1419;
-      --bg2:         #161B22;
-      --bg-elev:     #1A1E26;
-      --border:      #2A3040;
-      --border-soft: #1A2030;
-      --text:        #E2E8F0;
-      --text-dim:    #94A3B8;
-      --text-muted:  #64748B;
-      --text-subtle: #475569;
-      --accent:      #2563EB;
-      --accent-dim:  #1E40AF;
-      --green:       #16A34A;
-      --red:         #DC2626;
-      --yellow:      #F59E0B;
+      --bg0:         #0E1109;
+      --bg1:         #12160F;
+      --bg2:         #1B2016;
+      --bg-elev:     #232C1C;
+      --border:      #3A4728;
+      --border-soft: #2C3620;
+      --text:        #EFF1E7;
+      --text-dim:    #C7CDB8;
+      --text-muted:  #8A957A;
+      --text-subtle: #6C7B54;
+      --accent:      #AFCB4E;
+      --accent-hi:   #C1DC5F;
+      --accent-dim:  #8FAE2F;
+      --olive:       #333C29;
+      --on-accent:   #1B2016;
+      --green:       #6CBF3F;
+      --red:         #E5533C;
+      --yellow:      #E7C24A;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -37,6 +43,10 @@
       flex-direction: column;
       align-items: center;
       overflow-x: hidden;
+    }
+
+    h1, .lock-title, .brand-name, .card-title {
+      font-family: 'Chakra Petch', -apple-system, sans-serif;
     }
 
     /* ── Topo canvas ─────────────────────────────── */
@@ -73,26 +83,23 @@
       position: absolute;
       inset: -24px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(37,99,235,.2) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(175,203,78,.20) 0%, transparent 70%);
       animation: pulse 3s ease-in-out infinite;
     }
 
     .lock-logo img {
-      width: 80px; height: 80px;
-      border-radius: 18px;
+      width: 84px; height: 84px;
+      border-radius: 20px;
       position: relative;
-      box-shadow: 0 0 40px rgba(37,99,235,.3), 0 8px 24px rgba(0,0,0,.6);
+      box-shadow: 0 0 40px rgba(175,203,78,.22), 0 8px 24px rgba(0,0,0,.6);
     }
 
     .lock-title {
-      font-size: 28px;
-      font-weight: 800;
-      letter-spacing: -0.03em;
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
       margin-bottom: 6px;
-      background: linear-gradient(135deg, var(--text) 0%, var(--text-dim) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: var(--text);
     }
 
     .lock-subtitle {
@@ -172,18 +179,18 @@
       justify-content: center;
       gap: 8px;
       background: var(--accent);
-      color: #fff;
+      color: var(--on-accent);
       border: none;
       border-radius: 10px;
       padding: 13px;
       font-size: 15px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       transition: background .18s, transform .12s;
       font-family: inherit;
     }
 
-    .btn-enter:hover  { background: #1d4ed8; }
+    .btn-enter:hover  { background: var(--accent-hi); }
     .btn-enter:active { transform: scale(.97); }
     .btn-enter:disabled { background: var(--bg-elev); color: var(--text-muted); cursor: default; }
 
@@ -241,7 +248,7 @@
       font-size: 18px;
       font-weight: 700;
       color: var(--text);
-      letter-spacing: -0.02em;
+      letter-spacing: 0.14em;
     }
 
     .header-right {
@@ -286,7 +293,7 @@
       position: absolute;
       inset: -20px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(37,99,235,.22) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(175,203,78,.22) 0%, transparent 70%);
       animation: pulse 3s ease-in-out infinite;
     }
 
@@ -296,27 +303,24 @@
     }
 
     .logo-wrap img {
-      width: 88px; height: 88px;
-      border-radius: 20px;
+      width: 92px; height: 92px;
+      border-radius: 22px;
       position: relative;
-      box-shadow: 0 0 40px rgba(37,99,235,.35), 0 8px 32px rgba(0,0,0,.6);
+      box-shadow: 0 0 40px rgba(175,203,78,.28), 0 8px 32px rgba(0,0,0,.6);
     }
 
     .hero h1 {
-      font-size: 44px;
-      font-weight: 800;
-      letter-spacing: -0.04em;
-      background: linear-gradient(135deg, var(--text) 0%, var(--text-dim) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 10px;
+      font-size: 46px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--text);
+      margin-bottom: 12px;
     }
 
     .hero p {
       font-size: 15px;
       color: var(--text-dim);
-      max-width: 400px;
+      max-width: 420px;
       line-height: 1.6;
       margin-bottom: 20px;
     }
@@ -331,13 +335,13 @@
       padding: 5px 14px;
       font-size: 13px;
       color: var(--text-dim);
-      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-family: 'Space Mono', monospace;
     }
 
     .version-dot {
       width: 6px; height: 6px;
       border-radius: 50%;
-      background: var(--green);
+      background: var(--accent);
       animation: blink 2s ease-in-out infinite;
     }
 
@@ -357,7 +361,7 @@
 
     @media (max-width: 680px) {
       .cards { grid-template-columns: 1fr; }
-      .hero h1 { font-size: 32px; }
+      .hero h1 { font-size: 34px; }
     }
 
     @media (max-width: 900px) and (min-width: 681px) {
@@ -365,7 +369,7 @@
     }
 
     .card {
-      background: rgba(22,27,34,.82);
+      background: rgba(27,32,22,.82);
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 26px 22px 22px;
@@ -378,9 +382,9 @@
     }
 
     .card:hover {
-      border-color: rgba(37,99,235,.5);
+      border-color: rgba(175,203,78,.55);
       transform: translateY(-3px);
-      box-shadow: 0 16px 40px rgba(0,0,0,.4), 0 0 0 1px rgba(37,99,235,.1);
+      box-shadow: 0 16px 40px rgba(0,0,0,.4), 0 0 0 1px rgba(175,203,78,.12);
     }
 
     .card-icon {
@@ -392,15 +396,15 @@
     }
 
     .card-icon svg { width: 28px; height: 28px; }
-    .card-icon.win { background: rgba(37,99,235,.15); }
-    .card-icon.and { background: rgba(22,163,74,.15); }
-    .card-icon.mac { background: rgba(148,163,184,.1); }
+    .card-icon.win { background: rgba(175,203,78,.15); }
+    .card-icon.and { background: rgba(108,191,63,.15); }
+    .card-icon.mac { background: rgba(199,205,184,.12); }
 
     .card-title {
       font-size: 17px;
       font-weight: 700;
       color: var(--text);
-      letter-spacing: -0.01em;
+      letter-spacing: 0.04em;
     }
 
     .card-desc {
@@ -428,16 +432,16 @@
       justify-content: center;
       gap: 8px;
       background: var(--accent);
-      color: #fff;
+      color: var(--on-accent);
       text-decoration: none;
       border-radius: 10px;
       padding: 11px 20px;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
       transition: background .18s, transform .12s;
     }
 
-    .btn-download:hover  { background: #1d4ed8; }
+    .btn-download:hover  { background: var(--accent-hi); }
     .btn-download:active { transform: scale(.97); }
 
     .btn-download.loading {
@@ -451,6 +455,7 @@
       color: var(--text-muted);
       text-align: center;
       margin-top: -6px;
+      font-family: 'Space Mono', monospace;
     }
 
     /* ── Footer ──────────────────────────────────── */
@@ -476,8 +481,8 @@
 
     .spinner {
       width: 15px; height: 15px;
-      border: 2px solid rgba(255,255,255,.25);
-      border-top-color: #fff;
+      border: 2px solid rgba(27,32,22,.35);
+      border-top-color: var(--on-accent);
       border-radius: 50%;
       animation: spin .7s linear infinite;
       display: inline-block;
@@ -496,7 +501,7 @@
   <div class="lock-logo">
     <img src="./logo.png" alt="Sekta">
   </div>
-  <div class="lock-title">Sekta</div>
+  <div class="lock-title">SEKTA</div>
   <div class="lock-subtitle">Введіть пароль для доступу</div>
 
   <div class="lock-card">
@@ -532,7 +537,7 @@
   <header>
     <a href="." class="brand">
       <img src="./logo.png" alt="Sekta logo">
-      <span class="brand-name">Sekta</span>
+      <span class="brand-name">SEKTA</span>
     </a>
     <div class="header-right">
       <button class="btn-logout" id="btn-logout" type="button">
@@ -548,7 +553,7 @@
     <div class="logo-wrap">
       <img src="./logo.png" alt="Sekta">
     </div>
-    <h1>Sekta</h1>
+    <h1>SEKTA</h1>
     <p>Захищений портал підрозділу. Один застосунок — Windows, Android та macOS.</p>
     <div class="version-badge">
       <div class="version-dot"></div>
@@ -562,10 +567,10 @@
     <div class="card">
       <div class="card-icon win">
         <svg viewBox="0 0 24 24" fill="none">
-          <path d="M3 5.6L10.5 4.5V11.5H3V5.6Z" fill="#2563EB"/>
-          <path d="M11.5 4.35L21 3V11.5H11.5V4.35Z" fill="#2563EB"/>
-          <path d="M3 12.5H10.5V19.5L3 18.4V12.5Z" fill="#2563EB"/>
-          <path d="M11.5 12.5H21V21L11.5 19.65V12.5Z" fill="#2563EB"/>
+          <path d="M3 5.6L10.5 4.5V11.5H3V5.6Z" fill="#AFCB4E"/>
+          <path d="M11.5 4.35L21 3V11.5H11.5V4.35Z" fill="#AFCB4E"/>
+          <path d="M3 12.5H10.5V19.5L3 18.4V12.5Z" fill="#AFCB4E"/>
+          <path d="M11.5 12.5H21V21L11.5 19.65V12.5Z" fill="#AFCB4E"/>
         </svg>
       </div>
       <div>
@@ -584,7 +589,7 @@
     <div class="card">
       <div class="card-icon and">
         <svg viewBox="0 0 24 24" fill="none">
-          <path d="M6 18C6 18.55 6.45 19 7 19H8V22C8 22.55 8.45 23 9 23S10 22.55 10 22V19H14V22C14 22.55 14.45 23 15 23S16 22.55 16 22V19H17C17.55 19 18 18.55 18 18V9H6V18ZM3.5 9C2.67 9 2 9.67 2 10.5V17.5C2 18.33 2.67 19 3.5 19S5 18.33 5 17.5V10.5C5 9.67 4.33 9 3.5 9ZM20.5 9C19.67 9 19 9.67 19 10.5V17.5C19 18.33 19.67 19 20.5 19S22 18.33 22 17.5V10.5C22 9.67 21.33 9 20.5 9ZM15.53 2.16L16.84.85C17.03.66 17.03.38 16.84.19 16.65 0 16.37 0 16.18.19L14.7 1.67C13.83 1.25 12.94 1 12 1S10.17 1.25 9.3 1.67L7.82.19C7.63 0 7.35 0 7.16.19 6.97.38 6.97.66 7.16.85L8.47 2.16C6.97 3.07 6 4.62 6 6.5V7H18V6.5C18 4.62 17.03 3.07 15.53 2.16ZM10 5H9V4H10V5ZM15 5H14V4H15V5Z" fill="#16A34A"/>
+          <path d="M6 18C6 18.55 6.45 19 7 19H8V22C8 22.55 8.45 23 9 23S10 22.55 10 22V19H14V22C14 22.55 14.45 23 15 23S16 22.55 16 22V19H17C17.55 19 18 18.55 18 18V9H6V18ZM3.5 9C2.67 9 2 9.67 2 10.5V17.5C2 18.33 2.67 19 3.5 19S5 18.33 5 17.5V10.5C5 9.67 4.33 9 3.5 9ZM20.5 9C19.67 9 19 9.67 19 10.5V17.5C19 18.33 19.67 19 20.5 19S22 18.33 22 17.5V10.5C22 9.67 21.33 9 20.5 9ZM15.53 2.16L16.84.85C17.03.66 17.03.38 16.84.19 16.65 0 16.37 0 16.18.19L14.7 1.67C13.83 1.25 12.94 1 12 1S10.17 1.25 9.3 1.67L7.82.19C7.63 0 7.35 0 7.16.19 6.97.38 6.97.66 7.16.85L8.47 2.16C6.97 3.07 6 4.62 6 6.5V7H18V6.5C18 4.62 17.03 3.07 15.53 2.16ZM10 5H9V4H10V5ZM15 5H14V4H15V5Z" fill="#6CBF3F"/>
         </svg>
       </div>
       <div>
@@ -603,7 +608,7 @@
     <div class="card">
       <div class="card-icon mac">
         <svg viewBox="0 0 24 24" fill="none">
-          <path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 22C7.78 22.05 6.8 20.68 5.96 19.47C4.25 17 2.94 12.45 4.7 9.39C5.57 7.87 7.13 6.91 8.82 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z" fill="#94A3B8"/>
+          <path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 22C7.78 22.05 6.8 20.68 5.96 19.47C4.25 17 2.94 12.45 4.7 9.39C5.57 7.87 7.13 6.91 8.82 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z" fill="#C7CDB8"/>
         </svg>
       </div>
       <div>
@@ -623,7 +628,7 @@
   <div class="divider"></div>
 
   <footer>
-    <span>Sekta · Внутрішній реліз</span>
+    <span>SEKTA · Внутрішній реліз</span>
   </footer>
 
 </div>
@@ -798,7 +803,7 @@ function loadRelease() {
   function draw(){
     const W=window.innerWidth,H=window.innerHeight;
     cv.width=W;cv.height=H;
-    cx.fillStyle='#0F1419';cx.fillRect(0,0,W,H);
+    cx.fillStyle='#12160F';cx.fillRect(0,0,W,H);
     const gx=120,gy=Math.max(160,Math.round(H/W*gx));
     const g=new Float32Array((gx+1)*(gy+1));
     for(let j=0;j<=gy;j++)for(let i=0;i<=gx;i++)g[j*(gx+1)+i]=elev(i/gx,j/gy);
@@ -806,7 +811,7 @@ function loadRelease() {
     for(let l=1;l<22;l++){
       const t=l/22,isI=l%5===0;
       cx.beginPath();
-      cx.strokeStyle=`rgba(37,99,235,${isI?.55:.28})`;
+      cx.strokeStyle=`rgba(175,203,78,${isI?.42:.20})`;
       cx.lineWidth=isI?1.5:.9;
       for(let j=0;j<gy;j++){for(let i=0;i<gx;i++){
         const v00=g[j*(gx+1)+i],v10=g[j*(gx+1)+i+1],v01=g[(j+1)*(gx+1)+i],v11=g[(j+1)*(gx+1)+i+1];
@@ -820,7 +825,7 @@ function loadRelease() {
       }}
       cx.stroke();
     }
-    cx.setLineDash([2,10]);cx.strokeStyle='rgba(37,99,235,0.11)';cx.lineWidth=0.5;
+    cx.setLineDash([2,10]);cx.strokeStyle='rgba(175,203,78,0.09)';cx.lineWidth=0.5;
     for(let n=1;n<=3;n++){
       cx.beginPath();cx.moveTo(W*n/4,0);cx.lineTo(W*n/4,H);cx.stroke();
       cx.beginPath();cx.moveTo(0,H*n/4);cx.lineTo(W,H*n/4);cx.stroke();
