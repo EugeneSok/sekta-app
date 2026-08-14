@@ -274,6 +274,24 @@
     }
     .btn-logout:hover { border-color: var(--text-muted); color: var(--text-dim); }
 
+    .btn-present {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      font-family: inherit;
+      transition: border-color .2s, color .2s, background .2s;
+    }
+    .btn-present:hover { border-color: rgba(175,203,78,.55); background: rgba(175,203,78,.08); color: var(--accent-hi); }
+
     /* ── Hero ────────────────────────────────────── */
     .hero {
       display: flex;
@@ -540,6 +558,12 @@
       <span class="brand-name">SEKTA</span>
     </a>
     <div class="header-right">
+      <a class="btn-present" href="./presentation.html">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+        </svg>
+        Презентація
+      </a>
       <button class="btn-logout" id="btn-logout" type="button">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
