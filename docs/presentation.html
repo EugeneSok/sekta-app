@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Sekta — цифровізація процесів підрозділу">
+<title>Sekta — презентація</title>
+<link rel="icon" type="image/png" href="./logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg0:#0E1109; --bg1:#12160F; --bg2:#1B2016; --bg-elev:#232C1C;
+    --border:#3A4728; --border-soft:#2C3620;
+    --text:#EFF1E7; --text-dim:#C7CDB8; --text-muted:#8A957A; --text-subtle:#6C7B54;
+    --accent:#AFCB4E; --accent-hi:#C1DC5F; --accent-dim:#8FAE2F; --on-accent:#1B2016;
+    --green:#6CBF3F; --red:#E5533C; --yellow:#E7C24A;
+    --disp:'Chakra Petch',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --mono:'Space Mono',ui-monospace,Menlo,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--sans);color:var(--text);background:var(--bg1);overflow:hidden}
+  #topo{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+
+  #deck{position:fixed;inset:0;z-index:1}
+  .slide{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;padding:7vh 8vw;opacity:0;transition:opacity .4s ease}
+  .slide.on{display:flex;opacity:1;animation:rise .5s ease}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @media(prefers-reduced-motion:reduce){.slide.on{animation:none}.slide{transition:none}}
+
+  .eyebrow{font-family:var(--mono);font-size:.76rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem}
+  h1{font-family:var(--disp);font-weight:700;line-height:1.05;letter-spacing:.04em}
+  h2{font-family:var(--disp);font-weight:700;font-size:clamp(1.7rem,3.6vw,2.9rem);line-height:1.08;letter-spacing:.03em;margin-bottom:.4rem}
+  .lead{color:var(--text-dim);font-size:clamp(1rem,1.5vw,1.2rem);max-width:62ch;line-height:1.55}
+  .sub{color:var(--text-muted);font-size:.88rem;margin-top:.3rem}
+
+  /* Title */
+  .title-wrap{align-items:flex-start}
+  .mark{width:104px;height:126px;margin-bottom:1.5rem;filter:drop-shadow(0 0 28px rgba(175,203,78,.35))}
+  .mark path{stroke:var(--accent-hi)}
+  .brand{font-family:var(--disp);font-weight:700;font-size:clamp(3rem,9vw,6.2rem);line-height:.95;letter-spacing:.14em}
+  .brand small{display:block;font-family:var(--mono);font-size:clamp(.7rem,1.4vw,.95rem);letter-spacing:.22em;color:var(--text-muted);text-transform:uppercase;margin-top:1.1rem;font-weight:400}
+  .rule{width:120px;height:3px;background:linear-gradient(90deg,var(--accent),transparent);margin:1.7rem 0;border-radius:2px}
+  .badge{display:inline-flex;align-items:center;gap:7px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:.8rem;color:var(--text-dim);font-family:var(--mono);margin-top:1.6rem}
+  .badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:blink 2s ease-in-out infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+  /* Grid cards */
+  .grid{display:grid;gap:.9rem;margin-top:1.6rem}
+  .grid.cols4{grid-template-columns:repeat(4,1fr)}
+  .grid.cols3{grid-template-columns:repeat(3,1fr)}
+  .grid.cols2{grid-template-columns:repeat(2,1fr)}
+  .card{background:rgba(27,32,22,.82);border:1px solid var(--border);border-radius:16px;padding:1rem 1.05rem;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:border-color .2s,transform .2s,box-shadow .2s}
+  .card:hover{border-color:rgba(175,203,78,.55);transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,.4),0 0 0 1px rgba(175,203,78,.12)}
+  .card .hd{display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin-bottom:.28rem}
+  .card h3{font-family:var(--disp);font-size:1.02rem;font-weight:700;letter-spacing:.03em;color:var(--accent-hi)}
+  .card p{color:var(--text-muted);font-size:.82rem;line-height:1.45}
+
+  /* LOCAL / VPN badge */
+  .svc{display:inline-flex;align-items:center;font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;padding:.16rem .46rem;border-radius:6px;font-weight:700;text-transform:uppercase;flex-shrink:0}
+  .svc.local{color:var(--green);border:1px solid rgba(108,191,63,.5);background:rgba(108,191,63,.12)}
+  .svc.vpn{color:var(--yellow);border:1px solid rgba(231,194,74,.5);background:rgba(231,194,74,.12)}
+
+  /* Project detail */
+  .proj-head{display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;margin-bottom:.2rem}
+  .proj-tag{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--on-accent);background:var(--accent);padding:.28rem .6rem;border-radius:7px;font-weight:700}
+  .chips{display:flex;flex-wrap:wrap;gap:.55rem;margin-top:1.5rem}
+  .chip{background:var(--bg2);border:1px solid var(--border);border-radius:999px;padding:.5rem .95rem;font-size:.86rem;color:var(--text);display:inline-flex;gap:.5rem;align-items:center}
+  .chip b{color:var(--accent-hi);font-weight:700}
+  .chip .cd{color:var(--text-subtle);font-size:.76rem}
+  .feat{display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem 2rem;margin-top:1.7rem;max-width:78ch}
+  .feat li{list-style:none;color:var(--text-muted);font-size:.9rem;line-height:1.45;padding-left:1.2rem;position:relative}
+  .feat li::before{content:'▹';position:absolute;left:0;color:var(--accent)}
+  .feat li b{color:var(--text-dim);font-weight:600}
+
+  /* stack + flow */
+  .stackrow{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.4rem}
+  .pill{background:rgba(27,32,22,.82);border:1px solid var(--border);border-radius:14px;padding:.9rem 1.2rem;flex:1;min-width:180px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .pill h4{color:var(--accent-hi);font-family:var(--disp);font-size:1.02rem;letter-spacing:.03em;margin-bottom:.25rem}
+  .pill p{color:var(--text-muted);font-size:.84rem;line-height:1.45}
+
+  .kpis{display:flex;gap:2.5rem;margin-top:1.8rem;flex-wrap:wrap}
+  .kpi b{display:block;font-family:var(--disp);font-size:clamp(2rem,5vw,3.3rem);color:var(--accent-hi);line-height:1;letter-spacing:.02em}
+  .kpi span{color:var(--text-muted);font-size:.84rem}
+
+  /* chrome */
+  #bar{position:fixed;left:0;top:0;height:3px;background:var(--accent);z-index:20;transition:width .3s;box-shadow:0 0 12px rgba(175,203,78,.6)}
+  #dots{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:20;max-width:80vw;flex-wrap:wrap;justify-content:center}
+  #dots i{width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:.2s}
+  #dots i.on{background:var(--accent);transform:scale(1.25);box-shadow:0 0 8px rgba(175,203,78,.7)}
+  #num{position:fixed;bottom:16px;right:22px;font-family:var(--mono);font-size:.76rem;color:var(--text-subtle);z-index:20}
+  #foot{position:fixed;bottom:16px;left:24px;font-family:var(--mono);font-size:.7rem;color:var(--text-subtle);letter-spacing:.1em;z-index:20}
+  #home{position:fixed;top:16px;left:22px;z-index:20;display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--text-muted);font-size:.76rem;font-weight:500;text-decoration:none;font-family:var(--sans);transition:border-color .2s,color .2s}
+  #home:hover{border-color:var(--text-muted);color:var(--text-dim)}
+  .hint{position:fixed;top:18px;right:22px;font-family:var(--mono);font-size:.68rem;color:var(--text-subtle);z-index:20}
+
+  @media print{
+    @page{size:A4 landscape;margin:0}
+    html,body{overflow:visible;height:auto;background:var(--bg1)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    #topo,#bar,#dots,#num,#foot,#home,.hint{display:none!important}
+    #deck{position:static}
+    .slide{position:relative;inset:auto;display:flex!important;opacity:1!important;animation:none!important;width:100%;min-height:100vh;height:100vh;page-break-after:always;break-after:page;border-bottom:1px solid var(--border)}
+    .card:hover{transform:none;box-shadow:none}
+  }
+</style>
+</head>
+<body>
+<canvas id="topo"></canvas>
+<div id="bar"></div>
+<a id="home" href="./index.html">← Портал Sekta</a>
+<div class="hint">← → навігація · F екран · Ctrl/Cmd+P → PDF</div>
+<div id="foot">SEKTA · цифровізація процесів підрозділу</div>
+<div id="num"></div>
+
+<div id="deck">
+
+  <!-- 1 Title -->
+  <section class="slide title-wrap">
+    <svg class="mark" viewBox="0 0 100 122" fill="none" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M50 14 L50 104"/><path d="M25 44 L25 86"/><path d="M75 44 L75 86"/><path d="M16 86 L84 86"/>
+      <path d="M43 25 L50 14 L57 25"/><path d="M19 53 L25 44 L31 53"/><path d="M69 53 L75 44 L81 53"/><path d="M43 98 L50 111 L57 98"/>
+    </svg>
+    <div class="brand">SEKTA<small>цифровізація процесів підрозділу</small></div>
+    <div class="rule"></div>
+    <p class="lead">Єдина екосистема сервісів для обліку особового складу, майна, бойової підготовки та управління — на одному стеку, з наскрізним аудитом і контролем доступу.</p>
+    <div class="badge"><span class="dot"></span>внутрішній реліз · презентація</div>
+  </section>
+
+  <!-- 2 Що це -->
+  <section class="slide">
+    <div class="eyebrow">Огляд</div>
+    <h2>Що таке Sekta</h2>
+    <p class="lead">Набір незалежних сервісів обліку для військового підрозділу на спільному стеку. Кожен самодостатній; усі закриті єдиним гейтом і мають наскрізний аудит «хто / коли / звідки».</p>
+    <div class="stackrow">
+      <div class="pill"><h4>PostgreSQL</h4><p>База даних кожного сервісу + централізований журнал аудиту.</p></div>
+      <div class="pill"><h4>Node-RED</h4><p>Бекенд-логіка у function-нодах: запити, ідемпотентність, аудит.</p></div>
+      <div class="pill"><h4>Dashboard 2.0</h4><p>Фронтенд: <span style="font-family:var(--mono)">.vue</span>-віджети, єдина дизайн-система.</p></div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><b>12</b><span>сервісів у порталі</span></div>
+      <div class="kpi"><b>1</b><span>гейт (логін + 2FA)</span></div>
+      <div class="kpi"><b>100%</b><span>дій під аудитом</span></div>
+    </div>
+  </section>
+
+  <!-- 3 Сервіси (портал) -->
+  <section class="slide">
+    <div class="eyebrow">Портал Sekta</div>
+    <h2>Сервіси</h2>
+    <div class="grid cols4">
+      <div class="card"><div class="hd"><h3>Sekta</h3><span class="svc local">local</span></div><p>Електронний документообіг.</p></div>
+      <div class="card"><div class="hd"><h3>HR</h3><span class="svc local">local</span></div><p>База даних S1.</p></div>
+      <div class="card"><div class="hd"><h3>S1</h3><span class="svc local">local</span></div><p>Стройовка.</p></div>
+      <div class="card"><div class="hd"><h3>S3</h3><span class="svc local">local</span></div><p>Графік службового навантаження + чергова служба.</p></div>
+      <div class="card"><div class="hd"><h3>Alarm</h3><span class="svc local">local</span></div><p>Система оповіщення.</p></div>
+      <div class="card"><div class="hd"><h3>Бойова підготовка</h3><span class="svc vpn">vpn</span></div><p>Облік результатів БП.</p></div>
+      <div class="card"><div class="hd"><h3>Інженерка</h3><span class="svc vpn">vpn</span></div><p>Облік вибухових речовин та інженерних боєприпасів.</p></div>
+      <div class="card"><div class="hd"><h3>БАК</h3><span class="svc vpn">vpn</span></div><p>Облік майна БАК.</p></div>
+      <div class="card"><div class="hd"><h3>S4</h3><span class="svc local">local</span></div><p>Інформація по руху о/с.</p></div>
+      <div class="card"><div class="hd"><h3>S5</h3><span class="svc vpn">vpn</span></div><p>Контроль закупок.</p></div>
+      <div class="card"><div class="hd"><h3>S6</h3><span class="svc vpn">vpn</span></div><p>Облік майна S6.</p></div>
+      <div class="card"><div class="hd"><h3>Combat</h3><span class="svc local">local</span></div><p>Планування СБЗ.</p></div>
+    </div>
+  </section>
+
+  <!-- Sekta — ЕДО -->
+  <section class="slide">
+    <div class="proj-head"><span class="proj-tag">Sekta</span><h2>Електронний документообіг</h2><span class="svc local">local</span></div>
+    <p class="lead">Єдиний простір руху документів підрозділу — реєстрація, маршрутизація й погодження в одному місці, за регламентом «Порядок взаємодії».</p>
+    <div class="chips">
+      <span class="chip"><b>Вхідні / Вихідні</b><span class="cd">реєстрація документів</span></span>
+      <span class="chip"><b>Погодження</b><span class="cd">маршрут по службах</span></span>
+      <span class="chip"><b>Реєстр</b><span class="cd">номенклатура справ</span></span>
+      <span class="chip"><b>Регламент</b><span class="cd">єдиний цикл взаємодії</span></span>
+    </div>
+    <ul class="feat">
+      <li><b>Єдиний контур</b> — оператори, служби, керівники, юрист в одному циклі.</li>
+      <li><b>Аудит руху</b> — хто/коли/звідки на кожному кроці документа.</li>
+    </ul>
+  </section>
+
+  <!-- HR -->
+  <section class="slide">
+    <div class="proj-head"><span class="proj-tag">HR</span><h2>База даних S1</h2><span class="svc local">local</span></div>
+    <p class="lead">Повний облік військовослужбовця: від картки до кадрового руху, соцсупроводу й вітрини командира.</p>
+    <div class="chips">
+      <span class="chip"><b>База</b><span class="cd">картка, родина, освіта, нагороди, поранення</span></span>
+      <span class="chip"><b>Кадри</b><span class="cd">звання, УБД, переміщення, довідки</span></span>
+      <span class="chip"><b>Кандидати</b><span class="cd">рекрути, етапи, зріз</span></span>
+      <span class="chip"><b>Соцсупровід</b><span class="cd">відпочинок, діти, поранені</span></span>
+      <span class="chip"><b>TV</b><span class="cd">стан кандидатів, рух о/с, ДН</span></span>
+    </div>
+    <ul class="feat">
+      <li><b>Наступні звання</b> — розрахунок з урахуванням днів на СБЗ зі Стройовки (S1).</li>
+      <li><b>Заявки DOCX</b> — на звання, на довідки (з гейтом доступу).</li>
+      <li><b>ВПО / ТОТ</b> — фільтри та позначки родини на окупованій території.</li>
+      <li><b>Контроль повноти даних</b> — критичні поля одним поглядом.</li>
+    </ul>
+  </section>
+
+  <!-- S1 — Стройовка -->
+  <section class="slide">
+    <div class="proj-head"><span class="proj-tag">S1</span><h2>Стройовка</h2><span class="svc local">local</span></div>
+    <p class="lead">Наявність особового складу: добова відомість, укомплектованість, узагальнені дані по підрозділах.</p>
+    <div class="chips">
+      <span class="chip"><b>Стройовка</b><span class="cd">наявність о/с</span></span>
+      <span class="chip"><b>Відсутні</b><span class="cd">причини, строки</span></span>
+      <span class="chip"><b>Добова відомість</b><span class="cd">зріз на дату</span></span>
+      <span class="chip"><b>Укомплектованість</b><span class="cd">штат / факт</span></span>
+      <span class="chip"><b>Узагальнені дані</b><span class="cd">зведення</span></span>
+    </div>
+    <ul class="feat">
+      <li><b>Дні на СБЗ</b> — джерело для розрахунку вислуги в HR (S1).</li>
+      <li><b>Адмінка + активність</b> — права, хто онлайн, аудит.</li>
+    </ul>
+  </section>
+
+  <!-- S3 — Графік -->
+  <section class="slide">
+    <div class="proj-head"><span class="proj-tag">S3</span><h2>Графік службового навантаження</h2><span class="svc local">local</span></div>
+    <p class="lead">Матриця статусів особового складу по днях місяця + чергова служба — планування нарядів і навантаження.</p>
+    <div class="chips">
+      <span class="chip"><b>База людей</b><span class="cd">реєстр о/с</span></span>
+      <span class="chip"><b>Внесення даних</b><span class="cd">статуси по днях</span></span>
+      <span class="chip"><b>Наряди</b><span class="cd">довідник видів</span></span>
+      <span class="chip"><b>Графік</b><span class="cd">матриця-місяць</span></span>
+      <span class="chip"><b>Чергова служба</b><span class="cd">поточний стан</span></span>
+    </div>
+    <ul class="feat">
+      <li><b>Пікер місяць → графік</b> — крос-віджет broadcast, свіжий SELECT.</li>
+      <li><b>Аудит + сповіщення</b> — журнал змін розкладу.</li>
+    </ul>
+  </section>
+
+  <!-- Alarm -->
+  <section class="slide">
+    <div class="proj-head"><span class="proj-tag">Alarm</span><h2>Система оповіщення</h2><span class="svc local">local</span></div>
+    <p class="lead">Автоматичний обдзвін особового складу для оповіщення та збору — телефонія + табло стану в реальному часі.</p>
+    <div class="chips">
+      <span class="chip"><b>Оповіщення</b><span class="cd">послідовний обдзвін, підтвердження #</span></span>
+      <span class="chip"><b>Список</b><span class="cd">контакти, черги, повтори</span></span>
+      <span class="chip"><b>Табло</b><span class="cd">стан збору наживо</span></span>
+      <span class="chip"><b>Налаштування</b><span class="cd">сценарії, канали</span></span>
+    </div>
+    <ul class="feat">
+      <li><b>Драйвер-агностик</b> — дзвінки FreeSWITCH-ESL / Asterisk + Signal.</li>
+      <li><b>Автономний</b> — без PostgreSQL/гейта; стан у файлах, доступ по паролю.</li>
+    </ul>
+  </section>
+
+  <!-- Бойова підготовка -->
+  <section class="slide">
+    <div class="proj-head"><span class="proj-tag">БП</span><h2>Бойова підготовка</h2><span class="svc vpn">vpn</span></div>
+    <p class="lead">Планування й облік занять, контрольні зрізи та звітність результатів БП за особовим складом.</p>
+    <div class="chips">
+      <span class="chip"><b>Заняття</b><span class="cd">облік проведених</span></span>
+      <span class="chip"><b>Контрольні зрізи</b><span class="cd">оцінка на кожного учасника</span></span>
+      <span class="chip"><b>Звіти</b><span class="cd">зведення результатів</span></span>
+      <span class="chip"><b>Імпорт з HR</b><span class="cd">актуальний список о/с</span></span>
+    </div>
+    <ul class="feat">
+      <li><b>Зрізи per-record</b> — окремий запис на учасника, client_token на кожен.</li>
+      <li><b>Аудит + сповіщення</b> — повна історія змін.</li>
+    </ul>
+  </section>
+
+  <!-- Інженерка -->
+  <section class="slide">
+    <div class="proj-head"><span class="proj-tag">Інженерка</span><h2>Вибухові речовини та боєприпаси</h2><span class="svc vpn">vpn</span></div>
+    <p class="lead">Облік руху інженерного майна, вибухових речовин та боєприпасів: прихід, витрата, контроль залишків.</p>
+    <div class="chips">
+      <span class="chip"><b>Накладні</b><span class="cd">прихід майна</span></span>
+      <span class="chip"><b>Витрата</b><span class="cd">списання / видача</span></span>
+      <span class="chip"><b>Контроль</b><span class="cd">залишки за назвою</span></span>
+    </div>
+    <ul class="feat">
+      <li><b>Generic-аудит</b> — jsonb old/new + label на всі таблиці.</li>
+      <li><b>Розрахунок залишку</b> — агрегація прихід−витрата, без бекенд-фільтрів.</li>
+    </ul>
+  </section>
+
+  <!-- БАК -->
+  <section class="slide">
+    <div class="proj-head"><span class="proj-tag">БАК</span><h2>Облік майна БАК</h2><span class="svc vpn">vpn</span></div>
+    <p class="lead">Наскрізний облік майна БАК: прихід, втрати, залишки, історія — із журналом змін.</p>
+    <div class="chips">
+      <span class="chip"><b>Накладні</b><span class="cd">прихід + серійні номери</span></span>
+      <span class="chip"><b>Втрати</b><span class="cd">знищене/втрачене + PDF-рапорт</span></span>
+      <span class="chip"><b>Залишки</b><span class="cd">розрахунок наклад−видача</span></span>
+      <span class="chip"><b>Історія</b><span class="cd">журнал аудиту</span></span>
+    </div>
+    <ul class="feat">
+      <li><b>Захист від дублів</b> — client_token per-record + унікальність серійного.</li>
+      <li><b>Вкладення PDF</b> — рапорти як bytea, віддача окремим ендпоінтом.</li>
+    </ul>
+  </section>
+
+  <!-- S4 -->
+  <section class="slide">
+    <div class="proj-head"><span class="proj-tag">S4</span><h2>Інформація по руху о/с</h2><span class="svc local">local</span></div>
+    <p class="lead">Речове забезпечення + рух особового складу: склад, видача, контроль, здача на склад. Служби: КЕС · Речова · Продовольча. Плюс ПММ, ТО, генератори.</p>
+    <div class="chips">
+      <span class="chip"><b>Склад</b><span class="cd">накладні, позиції, фото</span></span>
+      <span class="chip"><b>Особовий склад</b><span class="cd">люди, розміри, синхр. з HR</span></span>
+      <span class="chip"><b>Видача</b><span class="cd">3 типи + документи, здача на склад</span></span>
+      <span class="chip"><b>Контроль</b><span class="cd">залишки, розміри, майно особи</span></span>
+      <span class="chip"><b>Помилки</b><span class="cd">автоперевірки обліку</span></span>
+      <span class="chip"><b>ПММ / ТО / Генератори</b><span class="cd">транспорт, дорожні листи</span></span>
+    </div>
+    <ul class="feat">
+      <li><b>Документи автоматично:</b> Заявка, Роздавальна відомість, Накладна на тимчасову видачу.</li>
+      <li><b>Здача на склад</b> — заявка + архів майна особи, контроль оприбуткування.</li>
+      <li><b>Синхронізація з HR</b> — нічне підтягування списку кадрів без дублів.</li>
+      <li><b>Контроль обліку</b> — від'ємні залишки, прострочені терміни, відсутня служба.</li>
+    </ul>
+  </section>
+
+  <!-- S5 -->
+  <section class="slide">
+    <div class="proj-head"><span class="proj-tag">S5</span><h2>Контроль закупок</h2><span class="svc vpn">vpn</span></div>
+    <p class="lead">Планування забезпечення підрозділу: від реєстру потреб до закупівель за джерелами фінансування.</p>
+    <div class="chips">
+      <span class="chip"><b>Джерела фінансування</b><span class="cd">довідник бюджетів</span></span>
+      <span class="chip"><b>Закупки</b><span class="cd">позиції, суми, статус</span></span>
+      <span class="chip"><b>Потреба</b><span class="cd">реєстр заявок підрозділів</span></span>
+    </div>
+    <ul class="feat">
+      <li><b>Ідемпотентні записи</b> — client_token на форму, без дублів.</li>
+      <li><b>Аудит + сповіщення</b> — хто/коли/звідки, дзвіночок останніх змін.</li>
+    </ul>
+  </section>
+
+  <!-- S6 -->
+  <section class="slide">
+    <div class="proj-head"><span class="proj-tag">S6</span><h2>Облік майна S6</h2><span class="svc vpn">vpn</span></div>
+    <p class="lead">Наскрізний цикл руху майна підрозділу з журналом змін і контролем помилок обліку.</p>
+    <div class="chips">
+      <span class="chip"><b>Накладна</b><span class="cd">прихід майна</span></span>
+      <span class="chip"><b>Видача</b><span class="cd">видача о/с</span></span>
+      <span class="chip"><b>Втрати</b><span class="cd">знищене/втрачене</span></span>
+      <span class="chip"><b>Залишки</b><span class="cd">розрахунок наклад−видача</span></span>
+      <span class="chip"><b>Записи / Історія</b><span class="cd">черга змін, журнал</span></span>
+      <span class="chip"><b>Помилки</b><span class="cd">розбіжності, дублі</span></span>
+    </div>
+    <ul class="feat">
+      <li><b>Захист від дублів</b> у 2 шари — форм-токен на фронті + унікальний ключ у БД.</li>
+      <li><b>Помилки обліку</b> — мінусовий залишок, видано без приходу, дублі номенклатури.</li>
+    </ul>
+  </section>
+
+  <!-- Combat -->
+  <section class="slide">
+    <div class="proj-head"><span class="proj-tag">Combat</span><h2>Планування СБЗ</h2><span class="svc local">local</span></div>
+    <p class="lead">Оперативне управління та планування служби бойового забезпечення: чергування, результати, втрати, показники.</p>
+    <div class="chips">
+      <span class="chip"><b>Бойове чергування</b><span class="cd">+ заплановані заходи</span></span>
+      <span class="chip"><b>Результати роботи</b><span class="cd">таблиця S3</span></span>
+      <span class="chip"><b>Втрати</b><span class="cd">бк · втрати · S4-таблиця + PDF</span></span>
+      <span class="chip"><b>KPI / Charts</b><span class="cd">показники, діаграми</span></span>
+      <span class="chip"><b>Пілоти</b><span class="cd">таблиця пілотів</span></span>
+      <span class="chip"><b>Виплати · Історія</b><span class="cd">S1S3, журнал</span></span>
+    </div>
+    <ul class="feat">
+      <li><b>PDF-звіти</b> — БЧС-стилі матриці, зведення, картки.</li>
+      <li><b>Сповіщення</b> — зміни за 7 днів з наскрізного журналу.</li>
+    </ul>
+  </section>
+
+  <!-- sekta-update (infra) -->
+  <section class="slide">
+    <div class="proj-head"><span class="proj-tag">sekta-update</span><h2>Гейт та адміністрування</h2></div>
+    <p class="lead">Інфраструктура під усіма сервісами: логін + 2FA перед доступом, керування користувачами, оновлення та безпека.</p>
+    <div class="chips">
+      <span class="chip"><b>Вхід + 2FA</b><span class="cd">логін перед сервісами</span></span>
+      <span class="chip"><b>Користувачі</b><span class="cd">створення, блокування, backup-коди</span></span>
+      <span class="chip"><b>Оновлення</b><span class="cd">зашифровані архіви, міграції</span></span>
+      <span class="chip"><b>Логи · nginx · 2FA</b><span class="cd">адмін-панель</span></span>
+      <span class="chip"><b>Майстер налаштування</b><span class="cd">покроковий провіжинг</span></span>
+    </div>
+    <ul class="feat">
+      <li><b>Ідентифікація «довозиться»</b> у кожен запит — позивач у заголовку від гейта.</li>
+      <li><b>AU-9 append-only</b> — журнал аудиту неможливо стерти навіть адмінам.</li>
+      <li><b>Ротація секретів</b>, мережева ізоляція БД, governed retention 3 роки.</li>
+    </ul>
+  </section>
+
+  <!-- Безпека / комплаєнс -->
+  <section class="slide">
+    <div class="eyebrow">Безпека · комплаєнс</div>
+    <h2>Відповідність нормам безпеки</h2>
+    <p class="lead">Система <b style="color:var(--text-dim)">sekta-update</b> реалізує базові профілі безпеки <b style="color:var(--text-dim)">НАД № 409</b> (відкрита/конфіденційна) та <b style="color:var(--text-dim)">№ 419</b> (службова інформація; включає 409). Mapping — НД ТЗІ 3.6-006-24 / NIST 800-53. Технічну частину базових профілів фактично завершено.</p>
+    <div class="grid cols3" style="margin-top:1.3rem">
+      <div class="card"><h3>Багатофакторність</h3><p>IA-2 — TOTP + FIDO, стійкість до відтворення. Блокування спроб (AC-7).</p></div>
+      <div class="card"><h3>Аудит append-only</h3><p>AU-9 — журнал захищено від підробки: non-superuser роль, SECURITY DEFINER, REVOKE mutate.</p></div>
+      <div class="card"><h3>Журнал змін «хто/коли/звідки»</h3><p>AU-3/6/7 — автор + IP у кожному записі; UI перегляду/фільтр/diff/CSV.</p></div>
+      <div class="card"><h3>Паролі та крипто</h3><p>IA-5 — ≥12 символів, scrypt; TLS 1.2/1.3 + AEAD (SC-8/13); дампи at-rest AES-256-GCM.</p></div>
+      <div class="card"><h3>Периметр і сесії</h3><p>SC-7 firewall «заборонити все»; idle-таймаут 15 хв (SC-10/AC-11), припинення сеансу (AC-12).</p></div>
+      <div class="card"><h3>Кероване зберігання</h3><p>AU-11 — ротація/архівація логів і записів аудиту БД (строк 3 роки, з архівацією).</p></div>
+    </div>
+    <p class="sub" style="margin-top:1.1rem;font-family:var(--mono)">Доповідь про виконані заходи безпеки · станом на 08.07.2026 · релізи v1.2.2 → v1.3.15</p>
+  </section>
+
+  <!-- Закриття -->
+  <section class="slide title-wrap">
+    <svg class="mark" viewBox="0 0 100 122" fill="none" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M50 14 L50 104"/><path d="M25 44 L25 86"/><path d="M75 44 L75 86"/><path d="M16 86 L84 86"/>
+      <path d="M43 25 L50 14 L57 25"/><path d="M19 53 L25 44 L31 53"/><path d="M69 53 L75 44 L81 53"/><path d="M43 98 L50 111 L57 98"/>
+    </svg>
+    <h1 style="font-size:clamp(2rem,6vw,3.8rem)">Один підрозділ —<br>одна система обліку.</h1>
+    <div class="rule"></div>
+    <p class="lead">Sekta замінює десятки таблиць і папок єдиною цифровою екосистемою: швидко, під контролем, із повною історією.</p>
+    <p class="sub" style="margin-top:1.6rem;font-family:var(--mono)">SEKTA · by Sokol</p>
+  </section>
+
+</div>
+
+<div id="dots"></div>
+
+<script>
+(function(){
+  const slides=[...document.querySelectorAll('.slide')];
+  const dots=document.getElementById('dots');
+  const bar=document.getElementById('bar');
+  const num=document.getElementById('num');
+  let i=0;
+  slides.forEach((_,k)=>{const d=document.createElement('i');d.onclick=e=>{e.stopPropagation();go(k);};dots.appendChild(d);});
+  function go(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('on',k===i));
+    [...dots.children].forEach((d,k)=>d.classList.toggle('on',k===i));
+    bar.style.width=((i+1)/slides.length*100)+'%';
+    num.textContent=(i+1)+' / '+slides.length;
+  }
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){go(i+1);e.preventDefault();}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){go(i-1);}
+    else if(e.key==='Home'){go(0);}
+    else if(e.key==='End'){go(slides.length-1);}
+    else if(e.key==='f'||e.key==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();}
+  });
+  let sx=null;
+  document.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+  document.addEventListener('touchend',e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>50)go(i+(dx<0?1:-1));sx=null;},{passive:true});
+  document.getElementById('deck').addEventListener('click',e=>{
+    if(e.target.closest('a'))return;
+    go(i+(e.clientX>innerWidth*0.5?1:-1));
+  });
+  go(0);
+})();
+
+// ── Topo contour background (from sekta-app portal) ──
+(function(){
+  const cv=document.getElementById('topo');const cx=cv.getContext('2d');
+  const base=Array.from({length:256},(_,i)=>i);let seed=12345;
+  const rng=()=>{seed=(Math.imul(seed,1664525)+1013904223)|0;return(seed>>>0)/0x100000000;};
+  for(let i=255;i>0;i--){const j=Math.floor(rng()*(i+1));[base[i],base[j]]=[base[j],base[i]];}
+  const P=[...base,...base];
+  const fade=t=>t*t*t*(t*(t*6-15)+10);const lerp=(a,b,t)=>a+t*(b-a);
+  const grad=(h,x,y)=>{const v=h&3,u=v<2?x:y,w=v<2?y:x;return((h&1)?-u:u)+((h&2)?-w:w);};
+  function noise(xi,yi){const X=Math.floor(xi)&255,Y=Math.floor(yi)&255;const xf=xi-Math.floor(xi),yf=yi-Math.floor(yi);
+    const u=fade(xf),v=fade(yf),a=P[X]+Y,b=P[X+1]+Y;
+    return lerp(lerp(grad(P[a],xf,yf),grad(P[b],xf-1,yf),u),lerp(grad(P[a+1],xf,yf-1),grad(P[b+1],xf-1,yf-1),u),v);}
+  function fbm(x,y){let v=0,a=1,f=1,m=0;for(let i=0;i<3;i++){v+=a*noise(x*f+22.8,y*f+15.1);m+=a;a*=0.45;f*=1.7;}return v/m;}
+  function elev(nx,ny){return Math.max(0,Math.min(1,(fbm(nx,ny)+0.8)/1.2));}
+  function draw(){
+    const W=window.innerWidth,H=window.innerHeight;cv.width=W;cv.height=H;
+    cx.fillStyle='#12160F';cx.fillRect(0,0,W,H);
+    const gx=120,gy=Math.max(160,Math.round(H/W*gx));
+    const g=new Float32Array((gx+1)*(gy+1));
+    for(let j=0;j<=gy;j++)for(let i=0;i<=gx;i++)g[j*(gx+1)+i]=elev(i/gx,j/gy);
+    const cw=W/gx,ch=H/gy;
+    for(let l=1;l<22;l++){const t=l/22,isI=l%5===0;cx.beginPath();
+      cx.strokeStyle=`rgba(175,203,78,${isI?.34:.16})`;cx.lineWidth=isI?1.4:.85;
+      for(let j=0;j<gy;j++){for(let i=0;i<gx;i++){
+        const v00=g[j*(gx+1)+i],v10=g[j*(gx+1)+i+1],v01=g[(j+1)*(gx+1)+i],v11=g[(j+1)*(gx+1)+i+1];
+        const x=i*cw,y=j*ch,lr=(a,b)=>b===a?0:(t-a)/(b-a),pts=[];
+        if((v00>t)!==(v10>t))pts.push([x+lr(v00,v10)*cw,y]);
+        if((v10>t)!==(v11>t))pts.push([x+cw,y+lr(v10,v11)*ch]);
+        if((v01>t)!==(v11>t))pts.push([x+lr(v01,v11)*cw,y+ch]);
+        if((v00>t)!==(v01>t))pts.push([x,y+lr(v00,v01)*ch]);
+        if(pts.length>=2){cx.moveTo(pts[0][0],pts[0][1]);cx.lineTo(pts[1][0],pts[1][1]);}
+        if(pts.length===4){cx.moveTo(pts[2][0],pts[2][1]);cx.lineTo(pts[3][0],pts[3][1]);}
+      }}cx.stroke();}
+    cx.setLineDash([2,10]);cx.strokeStyle='rgba(175,203,78,0.07)';cx.lineWidth=0.5;
+    for(let n=1;n<=3;n++){cx.beginPath();cx.moveTo(W*n/4,0);cx.lineTo(W*n/4,H);cx.stroke();
+      cx.beginPath();cx.moveTo(0,H*n/4);cx.lineTo(W,H*n/4);cx.stroke();}
+    cx.setLineDash([]);
+  }
+  draw();window.addEventListener('resize',()=>{clearTimeout(window._t);window._t=setTimeout(draw,150);});
+})();
+</script>
+</body>
+</html>
