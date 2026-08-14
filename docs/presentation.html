@@ -56,12 +56,17 @@
   .card{background:rgba(27,32,22,.82);border:1px solid var(--border);border-radius:16px;padding:1rem 1.05rem;
     backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:border-color .2s,transform .2s,box-shadow .2s}
   .card:hover{border-color:rgba(175,203,78,.55);transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,.4),0 0 0 1px rgba(175,203,78,.12)}
-  .card .ic{font-size:1.35rem;margin-bottom:.5rem;display:block}
-  .card h3{font-family:var(--disp);font-size:1.02rem;font-weight:700;letter-spacing:.03em;margin-bottom:.22rem;color:var(--accent-hi)}
+  .card .hd{display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin-bottom:.28rem}
+  .card h3{font-family:var(--disp);font-size:1.02rem;font-weight:700;letter-spacing:.03em;color:var(--accent-hi)}
   .card p{color:var(--text-muted);font-size:.82rem;line-height:1.45}
 
+  /* LOCAL / VPN badge */
+  .svc{display:inline-flex;align-items:center;font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;padding:.16rem .46rem;border-radius:6px;font-weight:700;text-transform:uppercase;flex-shrink:0}
+  .svc.local{color:var(--green);border:1px solid rgba(108,191,63,.5);background:rgba(108,191,63,.12)}
+  .svc.vpn{color:var(--yellow);border:1px solid rgba(231,194,74,.5);background:rgba(231,194,74,.12)}
+
   /* Project detail */
-  .proj-head{display:flex;align-items:baseline;gap:.9rem;flex-wrap:wrap;margin-bottom:.2rem}
+  .proj-head{display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;margin-bottom:.2rem}
   .proj-tag{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--on-accent);background:var(--accent);padding:.28rem .6rem;border-radius:7px;font-weight:700}
   .chips{display:flex;flex-wrap:wrap;gap:.55rem;margin-top:1.5rem}
   .chip{background:var(--bg2);border:1px solid var(--border);border-radius:999px;padding:.5rem .95rem;font-size:.86rem;color:var(--text);display:inline-flex;gap:.5rem;align-items:center}
@@ -77,9 +82,6 @@
   .pill{background:rgba(27,32,22,.82);border:1px solid var(--border);border-radius:14px;padding:.9rem 1.2rem;flex:1;min-width:180px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
   .pill h4{color:var(--accent-hi);font-family:var(--disp);font-size:1.02rem;letter-spacing:.03em;margin-bottom:.25rem}
   .pill p{color:var(--text-muted);font-size:.84rem;line-height:1.45}
-  .flow{display:flex;align-items:center;gap:.55rem;flex-wrap:wrap;margin-top:1.6rem;font-family:var(--mono);font-size:.78rem;color:var(--text-muted)}
-  .flow span{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:.5rem .8rem;color:var(--text)}
-  .flow .ar{color:var(--accent)}
 
   .kpis{display:flex;gap:2.5rem;margin-top:1.8rem;flex-wrap:wrap}
   .kpi b{display:block;font-family:var(--disp);font-size:clamp(2rem,5vw,3.3rem);color:var(--accent-hi);line-height:1;letter-spacing:.02em}
@@ -87,7 +89,7 @@
 
   /* chrome */
   #bar{position:fixed;left:0;top:0;height:3px;background:var(--accent);z-index:20;transition:width .3s;box-shadow:0 0 12px rgba(175,203,78,.6)}
-  #dots{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:20}
+  #dots{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:20;max-width:80vw;flex-wrap:wrap;justify-content:center}
   #dots i{width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:.2s}
   #dots i.on{background:var(--accent);transform:scale(1.25);box-shadow:0 0 8px rgba(175,203,78,.7)}
   #num{position:fixed;bottom:16px;right:22px;font-family:var(--mono);font-size:.76rem;color:var(--text-subtle);z-index:20}
@@ -95,7 +97,6 @@
   #home{position:fixed;top:16px;left:22px;z-index:20;display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--text-muted);font-size:.76rem;font-weight:500;text-decoration:none;font-family:var(--sans);transition:border-color .2s,color .2s}
   #home:hover{border-color:var(--text-muted);color:var(--text-dim)}
   .hint{position:fixed;top:18px;right:22px;font-family:var(--mono);font-size:.68rem;color:var(--text-subtle);z-index:20}
-  .watermark{position:absolute;right:6vw;bottom:12vh;font-family:var(--disp);font-size:13vw;color:rgba(175,203,78,.045);pointer-events:none;user-select:none;line-height:1;letter-spacing:.1em}
 
   @media print{
     @page{size:A4 landscape;margin:0}
@@ -104,7 +105,6 @@
     #deck{position:static}
     .slide{position:relative;inset:auto;display:flex!important;opacity:1!important;animation:none!important;width:100%;min-height:100vh;height:100vh;page-break-after:always;break-after:page;border-bottom:1px solid var(--border)}
     .card:hover{transform:none;box-shadow:none}
-    .watermark{display:none}
   }
 </style>
 </head>
@@ -126,7 +126,7 @@
     </svg>
     <div class="brand">SEKTA<small>цифровізація процесів підрозділу</small></div>
     <div class="rule"></div>
-    <p class="lead">Єдина екосистема дашбордів для обліку особового складу, майна, бойової підготовки та управління — на одному стеку, з наскрізним аудитом і контролем доступу.</p>
+    <p class="lead">Єдина екосистема сервісів для обліку особового складу, майна, бойової підготовки та управління — на одному стеку, з наскрізним аудитом і контролем доступу.</p>
     <div class="badge"><span class="dot"></span>внутрішній реліз · презентація</div>
   </section>
 
@@ -134,43 +134,175 @@
   <section class="slide">
     <div class="eyebrow">Огляд</div>
     <h2>Що таке Sekta</h2>
-    <p class="lead">Набір незалежних застосунків обліку для військового підрозділу на спільному стеку. Кожен самодостатній; усі закриті єдиним гейтом і мають наскрізний аудит «хто / коли / звідки».</p>
+    <p class="lead">Набір незалежних сервісів обліку для військового підрозділу на спільному стеку. Кожен самодостатній; усі закриті єдиним гейтом і мають наскрізний аудит «хто / коли / звідки».</p>
     <div class="stackrow">
-      <div class="pill"><h4>PostgreSQL</h4><p>База даних кожного застосунку + централізований журнал аудиту.</p></div>
+      <div class="pill"><h4>PostgreSQL</h4><p>База даних кожного сервісу + централізований журнал аудиту.</p></div>
       <div class="pill"><h4>Node-RED</h4><p>Бекенд-логіка у function-нодах: запити, ідемпотентність, аудит.</p></div>
       <div class="pill"><h4>Dashboard 2.0</h4><p>Фронтенд: <span style="font-family:var(--mono)">.vue</span>-віджети, єдина дизайн-система.</p></div>
     </div>
     <div class="kpis">
-      <div class="kpi"><b>12+</b><span>застосунків-дашбордів</span></div>
+      <div class="kpi"><b>12</b><span>сервісів у порталі</span></div>
       <div class="kpi"><b>1</b><span>гейт (логін + 2FA)</span></div>
       <div class="kpi"><b>100%</b><span>дій під аудитом</span></div>
     </div>
   </section>
 
-  <!-- 3 Карта -->
+  <!-- 3 Сервіси (портал) -->
   <section class="slide">
-    <div class="eyebrow">Карта системи</div>
-    <h2>Застосунки Sekta</h2>
+    <div class="eyebrow">Портал Sekta</div>
+    <h2>Сервіси</h2>
     <div class="grid cols4">
-      <div class="card"><h3>Логістика (s4/auto)</h3><p>Речове майно, ПММ, ТО, генератори, господарська частина.</p></div>
-      <div class="card"><h3>HR</h3><p>Особовий склад: картки, родина, кадри, соцсупровід, нагороди.</p></div>
-      <div class="card"><h3>s6 / bak</h3><p>Облік майна: накладні, видача, втрати, залишки, історія.</p></div>
-      <div class="card"><h3>s5</h3><p>Закупки та реєстр потреб підрозділу.</p></div>
-      <div class="card"><h3>Бойова підготовка</h3><p>Заняття, контрольні зрізи, звіти.</p></div>
-      <div class="card"><h3>Інженерне майно</h3><p>Витрата, накладні, контроль залишків.</p></div>
-      <div class="card"><h3>Combat</h3><p>Бойове управління: чергування, втрати, KPI, пілоти.</p></div>
-      <div class="card"><h3>Графік нарядів</h3><p>Матриця статусів о/с по днях, черговий.</p></div>
-      <div class="card"><h3>Стройова записка</h3><p>Наявність о/с, добова відомість, укомплектованість.</p></div>
-      <div class="card"><h3>Alarm</h3><p>Оповіщення/збір о/с: дзвінки, табло, налаштування.</p></div>
-      <div class="card"><h3>Sekta-update</h3><p>Гейт + адмінка: користувачі, оновлення, безпека.</p></div>
-      <div class="card"><h3>Регламент</h3><p>«Порядок взаємодії» — єдиний цикл роботи служб.</p></div>
+      <div class="card"><div class="hd"><h3>Sekta</h3><span class="svc local">local</span></div><p>Електронний документообіг.</p></div>
+      <div class="card"><div class="hd"><h3>HR</h3><span class="svc local">local</span></div><p>База даних S1.</p></div>
+      <div class="card"><div class="hd"><h3>S1</h3><span class="svc local">local</span></div><p>Стройовка.</p></div>
+      <div class="card"><div class="hd"><h3>S3</h3><span class="svc local">local</span></div><p>Графік службового навантаження + чергова служба.</p></div>
+      <div class="card"><div class="hd"><h3>Alarm</h3><span class="svc local">local</span></div><p>Система оповіщення.</p></div>
+      <div class="card"><div class="hd"><h3>Бойова підготовка</h3><span class="svc vpn">vpn</span></div><p>Облік результатів БП.</p></div>
+      <div class="card"><div class="hd"><h3>Інженерка</h3><span class="svc vpn">vpn</span></div><p>Облік вибухових речовин та інженерних боєприпасів.</p></div>
+      <div class="card"><div class="hd"><h3>БАК</h3><span class="svc vpn">vpn</span></div><p>Облік майна БАК.</p></div>
+      <div class="card"><div class="hd"><h3>S4</h3><span class="svc local">local</span></div><p>Інформація по руху о/с.</p></div>
+      <div class="card"><div class="hd"><h3>S5</h3><span class="svc vpn">vpn</span></div><p>Контроль закупок.</p></div>
+      <div class="card"><div class="hd"><h3>S6</h3><span class="svc vpn">vpn</span></div><p>Облік майна S6.</p></div>
+      <div class="card"><div class="hd"><h3>Combat</h3><span class="svc local">local</span></div><p>Планування СБЗ.</p></div>
     </div>
   </section>
 
-  <!-- 4 s4 -->
+  <!-- Sekta — ЕДО -->
   <section class="slide">
-    <div class="proj-head"><span class="proj-tag">s4 · auto</span><h2>Логістичне забезпечення</h2></div>
-    <p class="lead">Господарська частина (речове майно) + ПММ, ТО, генератори. Служби забезпечення: КЕС · Речова · Продовольча.</p>
+    <div class="proj-head"><span class="proj-tag">Sekta</span><h2>Електронний документообіг</h2><span class="svc local">local</span></div>
+    <p class="lead">Єдиний простір руху документів підрозділу — реєстрація, маршрутизація й погодження в одному місці, за регламентом «Порядок взаємодії».</p>
+    <div class="chips">
+      <span class="chip"><b>Вхідні / Вихідні</b><span class="cd">реєстрація документів</span></span>
+      <span class="chip"><b>Погодження</b><span class="cd">маршрут по службах</span></span>
+      <span class="chip"><b>Реєстр</b><span class="cd">номенклатура справ</span></span>
+      <span class="chip"><b>Регламент</b><span class="cd">єдиний цикл взаємодії</span></span>
+    </div>
+    <ul class="feat">
+      <li><b>Єдиний контур</b> — оператори, служби, керівники, юрист в одному циклі.</li>
+      <li><b>Аудит руху</b> — хто/коли/звідки на кожному кроці документа.</li>
+    </ul>
+  </section>
+
+  <!-- HR -->
+  <section class="slide">
+    <div class="proj-head"><span class="proj-tag">HR</span><h2>База даних S1</h2><span class="svc local">local</span></div>
+    <p class="lead">Повний облік військовослужбовця: від картки до кадрового руху, соцсупроводу й вітрини командира.</p>
+    <div class="chips">
+      <span class="chip"><b>База</b><span class="cd">картка, родина, освіта, нагороди, поранення</span></span>
+      <span class="chip"><b>Кадри</b><span class="cd">звання, УБД, переміщення, довідки</span></span>
+      <span class="chip"><b>Кандидати</b><span class="cd">рекрути, етапи, зріз</span></span>
+      <span class="chip"><b>Соцсупровід</b><span class="cd">відпочинок, діти, поранені</span></span>
+      <span class="chip"><b>TV</b><span class="cd">стан кандидатів, рух о/с, ДН</span></span>
+    </div>
+    <ul class="feat">
+      <li><b>Наступні звання</b> — розрахунок з урахуванням днів на СБЗ зі Стройовки (S1).</li>
+      <li><b>Заявки DOCX</b> — на звання, на довідки (з гейтом доступу).</li>
+      <li><b>ВПО / ТОТ</b> — фільтри та позначки родини на окупованій території.</li>
+      <li><b>Контроль повноти даних</b> — критичні поля одним поглядом.</li>
+    </ul>
+  </section>
+
+  <!-- S1 — Стройовка -->
+  <section class="slide">
+    <div class="proj-head"><span class="proj-tag">S1</span><h2>Стройовка</h2><span class="svc local">local</span></div>
+    <p class="lead">Наявність особового складу: добова відомість, укомплектованість, узагальнені дані по підрозділах.</p>
+    <div class="chips">
+      <span class="chip"><b>Стройовка</b><span class="cd">наявність о/с</span></span>
+      <span class="chip"><b>Відсутні</b><span class="cd">причини, строки</span></span>
+      <span class="chip"><b>Добова відомість</b><span class="cd">зріз на дату</span></span>
+      <span class="chip"><b>Укомплектованість</b><span class="cd">штат / факт</span></span>
+      <span class="chip"><b>Узагальнені дані</b><span class="cd">зведення</span></span>
+    </div>
+    <ul class="feat">
+      <li><b>Дні на СБЗ</b> — джерело для розрахунку вислуги в HR (S1).</li>
+      <li><b>Адмінка + активність</b> — права, хто онлайн, аудит.</li>
+    </ul>
+  </section>
+
+  <!-- S3 — Графік -->
+  <section class="slide">
+    <div class="proj-head"><span class="proj-tag">S3</span><h2>Графік службового навантаження</h2><span class="svc local">local</span></div>
+    <p class="lead">Матриця статусів особового складу по днях місяця + чергова служба — планування нарядів і навантаження.</p>
+    <div class="chips">
+      <span class="chip"><b>База людей</b><span class="cd">реєстр о/с</span></span>
+      <span class="chip"><b>Внесення даних</b><span class="cd">статуси по днях</span></span>
+      <span class="chip"><b>Наряди</b><span class="cd">довідник видів</span></span>
+      <span class="chip"><b>Графік</b><span class="cd">матриця-місяць</span></span>
+      <span class="chip"><b>Чергова служба</b><span class="cd">поточний стан</span></span>
+    </div>
+    <ul class="feat">
+      <li><b>Пікер місяць → графік</b> — крос-віджет broadcast, свіжий SELECT.</li>
+      <li><b>Аудит + сповіщення</b> — журнал змін розкладу.</li>
+    </ul>
+  </section>
+
+  <!-- Alarm -->
+  <section class="slide">
+    <div class="proj-head"><span class="proj-tag">Alarm</span><h2>Система оповіщення</h2><span class="svc local">local</span></div>
+    <p class="lead">Автоматичний обдзвін особового складу для оповіщення та збору — телефонія + табло стану в реальному часі.</p>
+    <div class="chips">
+      <span class="chip"><b>Оповіщення</b><span class="cd">послідовний обдзвін, підтвердження #</span></span>
+      <span class="chip"><b>Список</b><span class="cd">контакти, черги, повтори</span></span>
+      <span class="chip"><b>Табло</b><span class="cd">стан збору наживо</span></span>
+      <span class="chip"><b>Налаштування</b><span class="cd">сценарії, канали</span></span>
+    </div>
+    <ul class="feat">
+      <li><b>Драйвер-агностик</b> — дзвінки FreeSWITCH-ESL / Asterisk + Signal.</li>
+      <li><b>Автономний</b> — без PostgreSQL/гейта; стан у файлах, доступ по паролю.</li>
+    </ul>
+  </section>
+
+  <!-- Бойова підготовка -->
+  <section class="slide">
+    <div class="proj-head"><span class="proj-tag">БП</span><h2>Бойова підготовка</h2><span class="svc vpn">vpn</span></div>
+    <p class="lead">Планування й облік занять, контрольні зрізи та звітність результатів БП за особовим складом.</p>
+    <div class="chips">
+      <span class="chip"><b>Заняття</b><span class="cd">облік проведених</span></span>
+      <span class="chip"><b>Контрольні зрізи</b><span class="cd">оцінка на кожного учасника</span></span>
+      <span class="chip"><b>Звіти</b><span class="cd">зведення результатів</span></span>
+      <span class="chip"><b>Імпорт з HR</b><span class="cd">актуальний список о/с</span></span>
+    </div>
+    <ul class="feat">
+      <li><b>Зрізи per-record</b> — окремий запис на учасника, client_token на кожен.</li>
+      <li><b>Аудит + сповіщення</b> — повна історія змін.</li>
+    </ul>
+  </section>
+
+  <!-- Інженерка -->
+  <section class="slide">
+    <div class="proj-head"><span class="proj-tag">Інженерка</span><h2>Вибухові речовини та боєприпаси</h2><span class="svc vpn">vpn</span></div>
+    <p class="lead">Облік руху інженерного майна, вибухових речовин та боєприпасів: прихід, витрата, контроль залишків.</p>
+    <div class="chips">
+      <span class="chip"><b>Накладні</b><span class="cd">прихід майна</span></span>
+      <span class="chip"><b>Витрата</b><span class="cd">списання / видача</span></span>
+      <span class="chip"><b>Контроль</b><span class="cd">залишки за назвою</span></span>
+    </div>
+    <ul class="feat">
+      <li><b>Generic-аудит</b> — jsonb old/new + label на всі таблиці.</li>
+      <li><b>Розрахунок залишку</b> — агрегація прихід−витрата, без бекенд-фільтрів.</li>
+    </ul>
+  </section>
+
+  <!-- БАК -->
+  <section class="slide">
+    <div class="proj-head"><span class="proj-tag">БАК</span><h2>Облік майна БАК</h2><span class="svc vpn">vpn</span></div>
+    <p class="lead">Наскрізний облік майна БАК: прихід, втрати, залишки, історія — із журналом змін.</p>
+    <div class="chips">
+      <span class="chip"><b>Накладні</b><span class="cd">прихід + серійні номери</span></span>
+      <span class="chip"><b>Втрати</b><span class="cd">знищене/втрачене + PDF-рапорт</span></span>
+      <span class="chip"><b>Залишки</b><span class="cd">розрахунок наклад−видача</span></span>
+      <span class="chip"><b>Історія</b><span class="cd">журнал аудиту</span></span>
+    </div>
+    <ul class="feat">
+      <li><b>Захист від дублів</b> — client_token per-record + унікальність серійного.</li>
+      <li><b>Вкладення PDF</b> — рапорти як bytea, віддача окремим ендпоінтом.</li>
+    </ul>
+  </section>
+
+  <!-- S4 -->
+  <section class="slide">
+    <div class="proj-head"><span class="proj-tag">S4</span><h2>Інформація по руху о/с</h2><span class="svc local">local</span></div>
+    <p class="lead">Речове забезпечення + рух особового складу: склад, видача, контроль, здача на склад. Служби: КЕС · Речова · Продовольча. Плюс ПММ, ТО, генератори.</p>
     <div class="chips">
       <span class="chip"><b>Склад</b><span class="cd">накладні, позиції, фото</span></span>
       <span class="chip"><b>Особовий склад</b><span class="cd">люди, розміри, синхр. з HR</span></span>
@@ -187,67 +319,43 @@
     </ul>
   </section>
 
-  <!-- 5 HR -->
+  <!-- S5 -->
   <section class="slide">
-    <div class="proj-head"><span class="proj-tag">hr</span><h2>Особовий склад (HR)</h2></div>
-    <p class="lead">Повний облік військовослужбовця: від картки до статистики, кадрового руху й вітрини командира.</p>
+    <div class="proj-head"><span class="proj-tag">S5</span><h2>Контроль закупок</h2><span class="svc vpn">vpn</span></div>
+    <p class="lead">Планування забезпечення підрозділу: від реєстру потреб до закупівель за джерелами фінансування.</p>
     <div class="chips">
-      <span class="chip"><b>База</b><span class="cd">картка, родина, освіта, нагороди, поранення</span></span>
-      <span class="chip"><b>Кадри</b><span class="cd">звання, УБД, переміщення, довідки</span></span>
-      <span class="chip"><b>Кандидати</b><span class="cd">рекрути, етапи, зріз</span></span>
-      <span class="chip"><b>Соцсупровід</b><span class="cd">відпочинок, діти, поранені</span></span>
-      <span class="chip"><b>Нагороди</b><span class="cd">родичі, ДР, автотранспорт</span></span>
-      <span class="chip"><b>TV</b><span class="cd">стан кандидатів, рух о/с, ДН</span></span>
+      <span class="chip"><b>Джерела фінансування</b><span class="cd">довідник бюджетів</span></span>
+      <span class="chip"><b>Закупки</b><span class="cd">позиції, суми, статус</span></span>
+      <span class="chip"><b>Потреба</b><span class="cd">реєстр заявок підрозділів</span></span>
     </div>
     <ul class="feat">
-      <li><b>Наступні звання</b> — розрахунок на читанні + дні на СБЗ зі Стройовки.</li>
-      <li><b>Заявки DOCX</b> — на звання, на довідки (лист із гейтом доступу).</li>
-      <li><b>Контроль повноти даних</b> — критичні поля одним поглядом.</li>
-      <li><b>ВПО / ТОТ</b> — фільтри та позначки родини на окупованій території.</li>
+      <li><b>Ідемпотентні записи</b> — client_token на форму, без дублів.</li>
+      <li><b>Аудит + сповіщення</b> — хто/коли/звідки, дзвіночок останніх змін.</li>
     </ul>
   </section>
 
-  <!-- 5b HR деталі -->
+  <!-- S6 -->
   <section class="slide">
-    <div class="eyebrow">hr · детально</div>
-    <h2>HR — розділи та функції</h2>
-    <div class="grid cols3">
-      <div class="card"><h3>База</h3><p>Картка · родина (ВПО/ТОТ) · освіта · нагороди · поранення. Фільтри й пошук.</p></div>
-      <div class="card"><h3>Кадри</h3><p>Присвоєння звань · УБД · переміщення · довідки. Розрахунок наступного звання.</p></div>
-      <div class="card"><h3>Кандидати</h3><p>Рекрути · етапи відбору · контрольний зріз · перехід у штат.</p></div>
-      <div class="card"><h3>Соцсупровід</h3><p>Відпочинок · діти · поранені. Облік соцпитань родини.</p></div>
-      <div class="card"><h3>TV</h3><p>Стан кандидатів · рух о/с · дні народження — режим для екрана.</p></div>
-      <div class="card"><h3>Адмінка · Check</h3><p>Права · контроль повноти даних · сповіщення · активність.</p></div>
-    </div>
-    <ul class="feat" style="margin-top:1.4rem">
-      <li><b>Заявки DOCX</b> — на звання та довідки, з гейтом доступу до завантаження.</li>
-      <li><b>Дні на СБЗ</b> — підтягуються зі Стройової записки у розрахунок вислуги.</li>
-    </ul>
-  </section>
-
-  <!-- 6 s6/bak -->
-  <section class="slide">
-    <div class="proj-head"><span class="proj-tag">s6 · bak</span><h2>Облік майна</h2></div>
-    <p class="lead">Наскрізний цикл руху майна підрозділу з журналом змін і контролем помилок.</p>
+    <div class="proj-head"><span class="proj-tag">S6</span><h2>Облік майна S6</h2><span class="svc vpn">vpn</span></div>
+    <p class="lead">Наскрізний цикл руху майна підрозділу з журналом змін і контролем помилок обліку.</p>
     <div class="chips">
       <span class="chip"><b>Накладна</b><span class="cd">прихід майна</span></span>
       <span class="chip"><b>Видача</b><span class="cd">видача о/с</span></span>
-      <span class="chip"><b>Втрати</b><span class="cd">знищене/втрачене + PDF-рапорт</span></span>
+      <span class="chip"><b>Втрати</b><span class="cd">знищене/втрачене</span></span>
       <span class="chip"><b>Залишки</b><span class="cd">розрахунок наклад−видача</span></span>
-      <span class="chip"><b>Записи / Історія</b><span class="cd">черга змін, журнал аудиту</span></span>
-      <span class="chip"><b>Помилки</b><span class="cd">розбіжності, дублі серійних</span></span>
+      <span class="chip"><b>Записи / Історія</b><span class="cd">черга змін, журнал</span></span>
+      <span class="chip"><b>Помилки</b><span class="cd">розбіжності, дублі</span></span>
     </div>
     <ul class="feat">
       <li><b>Захист від дублів</b> у 2 шари — форм-токен на фронті + унікальний ключ у БД.</li>
-      <li><b>Вкладення PDF</b> — рапорти зберігаються як bytea, віддача окремим ендпоінтом.</li>
       <li><b>Помилки обліку</b> — мінусовий залишок, видано без приходу, дублі номенклатури.</li>
     </ul>
   </section>
 
-  <!-- 7 combat -->
+  <!-- Combat -->
   <section class="slide">
-    <div class="proj-head"><span class="proj-tag">combat</span><h2>Бойове управління</h2></div>
-    <p class="lead">Оперативний облік: чергування, результати роботи, втрати, показники, пілоти.</p>
+    <div class="proj-head"><span class="proj-tag">Combat</span><h2>Планування СБЗ</h2><span class="svc local">local</span></div>
+    <p class="lead">Оперативне управління та планування служби бойового забезпечення: чергування, результати, втрати, показники.</p>
     <div class="chips">
       <span class="chip"><b>Бойове чергування</b><span class="cd">+ заплановані заходи</span></span>
       <span class="chip"><b>Результати роботи</b><span class="cd">таблиця S3</span></span>
@@ -262,126 +370,12 @@
     </ul>
   </section>
 
-  <!-- 7b combat деталі -->
-  <section class="slide">
-    <div class="eyebrow">combat · детально</div>
-    <h2>Бойове управління — розділи</h2>
-    <div class="grid cols3">
-      <div class="card"><h3>S3 — робота</h3><p>Бойове чергування · заплановані заходи · результати (таблиця S3).</p></div>
-      <div class="card"><h3>KPI · Charts</h3><p>Показники ефективності · діаграми · пілоти.</p></div>
-      <div class="card"><h3>Втрати</h3><p>БК · втрати особового складу · S4-таблиця. PDF-звіти БЧС.</p></div>
-      <div class="card"><h3>S1S3 — виплати</h3><p>Облік виплат, прив'язка до особового складу.</p></div>
-      <div class="card"><h3>Паролі · District</h3><p>Довідник паролів · районна прив'язка.</p></div>
-      <div class="card"><h3>Історія · Сповіщення</h3><p>Журнал змін · дзвіночок за 7 днів із наскрізного аудиту.</p></div>
-    </div>
-    <ul class="feat" style="margin-top:1.4rem">
-      <li><b>PDF-ендпоінт</b> — матриці БЧС, зведення, картки; віддача окремою гілкою flow.</li>
-      <li><b>Активність</b> — хто онлайн, сесії, IP; права на завантаження по сторінках.</li>
-    </ul>
-  </section>
-
-  <!-- 8 s5 -->
-  <section class="slide">
-    <div class="proj-head"><span class="proj-tag">s5</span><h2>Закупки та потреби</h2></div>
-    <p class="lead">Планування забезпечення підрозділу: від реєстру потреб до закупівель за джерелами фінансування.</p>
-    <div class="chips">
-      <span class="chip"><b>Джерела фінансування</b><span class="cd">довідник бюджетів</span></span>
-      <span class="chip"><b>Закупки</b><span class="cd">позиції, суми, статус</span></span>
-      <span class="chip"><b>Потреба</b><span class="cd">реєстр заявок підрозділів</span></span>
-    </div>
-    <ul class="feat">
-      <li><b>Ідемпотентні записи</b> — client_token на форму, без дублів.</li>
-      <li><b>Аудит + сповіщення</b> — хто/коли/звідки, дзвіночок останніх змін.</li>
-    </ul>
-  </section>
-
-  <!-- 9 bp -->
-  <section class="slide">
-    <div class="proj-head"><span class="proj-tag">bp</span><h2>Бойова підготовка</h2></div>
-    <p class="lead">Планування й облік занять, контрольні зрізи та звітність за особовим складом.</p>
-    <div class="chips">
-      <span class="chip"><b>Заняття</b><span class="cd">облік проведених</span></span>
-      <span class="chip"><b>Контрольні зрізи</b><span class="cd">оцінка на кожного учасника</span></span>
-      <span class="chip"><b>Звіти</b><span class="cd">зведення результатів</span></span>
-      <span class="chip"><b>Імпорт з HR</b><span class="cd">актуальний список о/с</span></span>
-    </div>
-    <ul class="feat">
-      <li><b>Зрізи per-record</b> — окремий запис на учасника, client_token на кожен.</li>
-      <li><b>Аудит + сповіщення</b> — повна історія змін.</li>
-    </ul>
-  </section>
-
-  <!-- 10 ingenerka -->
-  <section class="slide">
-    <div class="proj-head"><span class="proj-tag">ingenerka</span><h2>Інженерне майно</h2></div>
-    <p class="lead">Облік руху інженерного майна: прихід, витрата, контроль залишків (окрема схема БД).</p>
-    <div class="chips">
-      <span class="chip"><b>Накладні</b><span class="cd">прихід майна</span></span>
-      <span class="chip"><b>Витрата</b><span class="cd">списання/видача</span></span>
-      <span class="chip"><b>Контроль</b><span class="cd">залишки за назвою</span></span>
-    </div>
-    <ul class="feat">
-      <li><b>Generic-аудит</b> — jsonb old/new + label на всі таблиці.</li>
-      <li><b>Розрахунок залишку</b> — агрегація прихід−витрата, без бекенд-фільтрів.</li>
-    </ul>
-  </section>
-
-  <!-- 11 grafiks3 -->
-  <section class="slide">
-    <div class="proj-head"><span class="proj-tag">grafiks3</span><h2>Графік нарядів</h2></div>
-    <p class="lead">Матриця статусів особового складу по днях місяця — планування нарядів і чергувань.</p>
-    <div class="chips">
-      <span class="chip"><b>База людей</b><span class="cd">реєстр о/с</span></span>
-      <span class="chip"><b>Внесення даних</b><span class="cd">статуси по днях</span></span>
-      <span class="chip"><b>Наряди</b><span class="cd">довідник видів</span></span>
-      <span class="chip"><b>Графік</b><span class="cd">матриця-місяць</span></span>
-      <span class="chip"><b>Черговий</b><span class="cd">поточний стан</span></span>
-    </div>
-    <ul class="feat">
-      <li><b>Пікер місяць → графік</b> — крос-віджет broadcast, свіжий SELECT.</li>
-      <li><b>Аудит + сповіщення</b> — журнал змін розкладу.</li>
-    </ul>
-  </section>
-
-  <!-- 12 stroyovka -->
-  <section class="slide">
-    <div class="proj-head"><span class="proj-tag">stroyovka</span><h2>Стройова записка</h2></div>
-    <p class="lead">Наявність особового складу: добова відомість, укомплектованість, узагальнені дані по підрозділах.</p>
-    <div class="chips">
-      <span class="chip"><b>Стройовка</b><span class="cd">наявність о/с</span></span>
-      <span class="chip"><b>Відсутні</b><span class="cd">причини, строки</span></span>
-      <span class="chip"><b>Добова відомість</b><span class="cd">зріз на дату</span></span>
-      <span class="chip"><b>Укомплектованість</b><span class="cd">штат/факт</span></span>
-      <span class="chip"><b>Узагальнені дані</b><span class="cd">зведення</span></span>
-    </div>
-    <ul class="feat">
-      <li><b>Дні на СБЗ</b> — джерело для розрахунку вислуги в HR.</li>
-      <li><b>Адмінка + активність</b> — права, хто онлайн, аудит.</li>
-    </ul>
-  </section>
-
-  <!-- 13 alarm -->
-  <section class="slide">
-    <div class="proj-head"><span class="proj-tag">alarm</span><h2>Оповіщення / збір о/с</h2></div>
-    <p class="lead">Автоматичний обдзвін особового складу для оповіщення та збору — телефонія + табло стану.</p>
-    <div class="chips">
-      <span class="chip"><b>Оповіщення</b><span class="cd">послідовний обдзвін, підтвердження #</span></span>
-      <span class="chip"><b>Список</b><span class="cd">контакти, черги, повтори</span></span>
-      <span class="chip"><b>Табло</b><span class="cd">стан збору в реальному часі</span></span>
-      <span class="chip"><b>Налаштування</b><span class="cd">сценарії, канали</span></span>
-    </div>
-    <ul class="feat">
-      <li><b>Драйвер-агностик</b> — дзвінки FreeSWITCH-ESL / Asterisk + Signal.</li>
-      <li><b>Автономний</b> — без PostgreSQL/гейта; стан у файлах, доступ по паролю.</li>
-    </ul>
-  </section>
-
-  <!-- 9 sekta-update -->
+  <!-- sekta-update (infra) -->
   <section class="slide">
     <div class="proj-head"><span class="proj-tag">sekta-update</span><h2>Гейт та адміністрування</h2></div>
-    <p class="lead">Єдина точка входу й керування: логін + 2FA перед усіма дашбордами, керування користувачами, оновлення та безпека.</p>
+    <p class="lead">Інфраструктура під усіма сервісами: логін + 2FA перед доступом, керування користувачами, оновлення та безпека.</p>
     <div class="chips">
-      <span class="chip"><b>Вхід + 2FA</b><span class="cd">логін перед Node-RED</span></span>
+      <span class="chip"><b>Вхід + 2FA</b><span class="cd">логін перед сервісами</span></span>
       <span class="chip"><b>Користувачі</b><span class="cd">створення, блокування, backup-коди</span></span>
       <span class="chip"><b>Оновлення</b><span class="cd">зашифровані архіви, міграції</span></span>
       <span class="chip"><b>Логи · nginx · 2FA</b><span class="cd">адмін-панель</span></span>
@@ -402,15 +396,15 @@
     <div class="grid cols3" style="margin-top:1.3rem">
       <div class="card"><h3>Багатофакторність</h3><p>IA-2 — TOTP + FIDO, стійкість до відтворення. Блокування спроб (AC-7).</p></div>
       <div class="card"><h3>Аудит append-only</h3><p>AU-9 — журнал захищено від підробки: non-superuser роль, SECURITY DEFINER, REVOKE mutate.</p></div>
-      <div class="card"><h3>Журнал змін «хто/коли/звідки»</h3><p>AU-3/6/7 — автор + IP (changed_ip) у кожному записі; UI перегляду/фільтр/diff/CSV.</p></div>
-      <div class="card"><h3>Паролі та крипто</h3><p>IA-5 — ≥12 символів, scrypt-зберігання; TLS 1.2/1.3 + AEAD (SC-8/13); дампи at-rest AES-256-GCM.</p></div>
+      <div class="card"><h3>Журнал змін «хто/коли/звідки»</h3><p>AU-3/6/7 — автор + IP у кожному записі; UI перегляду/фільтр/diff/CSV.</p></div>
+      <div class="card"><h3>Паролі та крипто</h3><p>IA-5 — ≥12 символів, scrypt; TLS 1.2/1.3 + AEAD (SC-8/13); дампи at-rest AES-256-GCM.</p></div>
       <div class="card"><h3>Периметр і сесії</h3><p>SC-7 firewall «заборонити все»; idle-таймаут 15 хв (SC-10/AC-11), припинення сеансу (AC-12).</p></div>
       <div class="card"><h3>Кероване зберігання</h3><p>AU-11 — ротація/архівація логів і записів аудиту БД (строк 3 роки, з архівацією).</p></div>
     </div>
     <p class="sub" style="margin-top:1.1rem;font-family:var(--mono)">Доповідь про виконані заходи безпеки · станом на 08.07.2026 · релізи v1.2.2 → v1.3.15</p>
   </section>
 
-  <!-- 13 Закриття -->
+  <!-- Закриття -->
   <section class="slide title-wrap">
     <svg class="mark" viewBox="0 0 100 122" fill="none" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round">
       <path d="M50 14 L50 104"/><path d="M25 44 L25 86"/><path d="M75 44 L75 86"/><path d="M16 86 L84 86"/>
