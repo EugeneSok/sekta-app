@@ -98,7 +98,17 @@
   #home:hover{border-color:var(--text-muted);color:var(--text-dim)}
   .hint{position:fixed;top:18px;right:22px;font-family:var(--mono);font-size:.68rem;color:var(--text-subtle);z-index:20}
 
+  .nav{position:fixed;top:50%;transform:translateY(-50%);z-index:25;width:48px;height:48px;border-radius:50%;
+    background:var(--bg2);border:1px solid var(--border);color:var(--text-dim);font-size:26px;line-height:1;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:var(--sans);
+    transition:border-color .2s,color .2s,background .2s;box-shadow:0 4px 16px rgba(0,0,0,.35)}
+  .nav:hover{border-color:var(--accent);color:var(--accent-hi);background:var(--bg-elev)}
+  .nav:disabled{opacity:.25;cursor:default}
+  #prev{left:16px}#next{right:16px}
+
   @media(max-width:760px){
+    .nav{width:42px;height:42px;font-size:22px;opacity:.9}
+    #prev{left:8px}#next{right:8px}
     .slide{padding:7vh 6vw 9vh;justify-content:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
     h2{font-size:clamp(1.4rem,6vw,2rem)}
     .lead{font-size:.95rem;line-height:1.5}
@@ -124,7 +134,7 @@
   @media print{
     @page{size:A4 landscape;margin:0}
     html,body{overflow:visible;height:auto;background:var(--bg1)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    #topo,#bar,#dots,#num,#foot,#home,.hint{display:none!important}
+    #topo,#bar,#dots,#num,#foot,#home,.hint,.nav{display:none!important}
     #deck{position:static}
     .slide{position:relative;inset:auto;display:flex!important;opacity:1!important;animation:none!important;width:100%;min-height:100vh;height:100vh;page-break-after:always;break-after:page;border-bottom:1px solid var(--border)}
     .card:hover{transform:none;box-shadow:none}
@@ -135,9 +145,11 @@
 <canvas id="topo"></canvas>
 <div id="bar"></div>
 <a id="home" href="./index.html">← Портал Sekta</a>
-<div class="hint">← → навігація · F екран · Ctrl/Cmd+P → PDF</div>
+<div class="hint">‹ › або стрілки ← → · свайп · F — екран · Ctrl/Cmd+P → PDF</div>
 <div id="foot">SEKTA · цифровізація процесів підрозділу</div>
 <div id="num"></div>
+<button id="prev" class="nav" aria-label="Назад">‹</button>
+<button id="next" class="nav" aria-label="Далі">›</button>
 
 <div id="deck">
 
@@ -450,14 +462,21 @@
   const dots=document.getElementById('dots');
   const bar=document.getElementById('bar');
   const num=document.getElementById('num');
+  const prev=document.getElementById('prev');
+  const next=document.getElementById('next');
   let i=0;
   slides.forEach((_,k)=>{const d=document.createElement('i');d.onclick=e=>{e.stopPropagation();go(k);};dots.appendChild(d);});
+  prev.addEventListener('click',e=>{e.stopPropagation();go(i-1);});
+  next.addEventListener('click',e=>{e.stopPropagation();go(i+1);});
   function go(n){
     i=Math.max(0,Math.min(slides.length-1,n));
     slides.forEach((s,k)=>s.classList.toggle('on',k===i));
     [...dots.children].forEach((d,k)=>d.classList.toggle('on',k===i));
     bar.style.width=((i+1)/slides.length*100)+'%';
     num.textContent=(i+1)+' / '+slides.length;
+    prev.disabled=(i===0);
+    next.disabled=(i===slides.length-1);
+    if(slides[i]) slides[i].scrollTop=0;   // новий слайд — з початку (для скрол-режиму на мобілці)
   }
   document.addEventListener('keydown',e=>{
     if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){go(i+1);e.preventDefault();}
