@@ -24,8 +24,10 @@
   html,body{height:100%}
   html{background:var(--bg1)}
   body{font-family:var(--sans);color:var(--text);background:var(--bg1);overflow:hidden}
-  /* 100lvh = найбільша висота viewport (коли адрес-бар схований) → фон завжди покриває, без прогалин */
-  #topo{position:fixed;top:0;left:0;width:100vw;height:100vh;height:100lvh;pointer-events:none;z-index:0}
+  /* overscan: canvas вилазить за viewport на 40px усіх боків → покриває гарантовано,
+     незалежно від адрес-бару / підтримки dvh|lvh (крайні лінії — декор, обрізка не важлива) */
+  #topo{position:fixed;top:-40px;left:-40px;width:calc(100vw + 80px);
+    height:calc(100vh + 80px);height:calc(100lvh + 80px);pointer-events:none;z-index:0}
 
   #deck{position:fixed;inset:0;z-index:1}
   .slide{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;padding:7vh 8vw;opacity:0;transition:opacity .4s ease}
