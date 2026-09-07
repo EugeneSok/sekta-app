@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0E1109">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -114,12 +114,14 @@
   #prev{left:16px}#next{right:16px}
 
   @media(max-width:760px){
-    /* кнопки — вниз по кутах (не з боків, щоб не наїжджали на текст) */
-    .nav{top:auto;transform:none;bottom:14px;width:46px;height:46px;font-size:24px;opacity:.95}
+    /* кнопки — вниз по кутах (не з боків) + safe-area над home-indicator */
+    .nav{top:auto;transform:none;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);
+      width:46px;height:46px;font-size:24px;opacity:.95}
     #prev{left:12px;right:auto}
     #next{right:12px;left:auto}
-    /* нижній паддинг слайда, щоб контент не ховався за кнопками/крапками */
-    .slide{padding:6vh 6vw 82px;justify-content:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+    /* паддинги з урахуванням notch (зверху) і кнопок/home (знизу) */
+    .slide{padding:calc(env(safe-area-inset-top,0px) + 5vh) 6vw calc(env(safe-area-inset-bottom,0px) + 82px);
+      justify-content:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
     h2{font-size:clamp(1.4rem,6vw,2rem)}
     .lead{font-size:.95rem;line-height:1.5}
     .grid{gap:.6rem}
@@ -136,9 +138,9 @@
     .brand{font-size:clamp(2.4rem,14vw,3.6rem)}
     .proj-head{gap:.6rem}
     #foot,.hint{display:none}
-    #home{padding:5px 9px;font-size:.7rem}
+    #home{top:calc(env(safe-area-inset-top,0px) + 12px);padding:5px 9px;font-size:.7rem}
     #num{display:none}
-    #dots{bottom:24px;left:50%;transform:translateX(-50%);max-width:calc(100vw - 140px)}
+    #dots{bottom:calc(env(safe-area-inset-bottom,0px) + 24px);left:50%;transform:translateX(-50%);max-width:calc(100vw - 140px)}
   }
 
   @media print{
