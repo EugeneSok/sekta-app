@@ -599,9 +599,10 @@
       </div>
       <div>
         <div class="card-title">Windows</div>
-        <div class="card-desc">Портативний застосунок у <code style="color:var(--text-dim);font-size:12px">.zip</code> — встановлення не потрібне. Розпакуй архів у будь-яку теку (напр. <code style="color:var(--text-dim);font-size:12px">C:\Sekta</code>) і запусти <code style="color:var(--text-dim);font-size:12px">Sekta.exe</code>. Нові версії застосунок завантажує й розпаковує сам. Потребує Windows 10/11 та WebView2 Runtime.</div>
+        <div class="card-desc">Портативний застосунок у <code style="color:var(--text-dim);font-size:12px">.zip</code> — встановлення не потрібне. Розпакуй <b>увесь</b> архів (правою кнопкою → «Видобути все…») у постійну теку (напр. <code style="color:var(--text-dim);font-size:12px">C:\Sekta</code>) і запускай <code style="color:var(--text-dim);font-size:12px">Sekta.exe</code> звідти; на робочий стіл — лише ярлик. Нові версії застосунок завантажує й розпаковує сам. Потребує Windows 10/11 та WebView2 Runtime.</div>
       </div>
       <div class="card-note"><span>⚠</span> Якщо Windows Defender блокує — натисни «Детальніше» → «Все одно запустити».</div>
+      <div class="card-note"><span>⚠</span> Не запускай Sekta.exe прямо з архіву і не копіюй його окремо: поруч мають лежати файли .dll і тека data. Помилка «…_plugin.dll was not found» означає, що їх бракує — розпакуй архів заново або віднови файли з карантину антивірусу й додай теку у винятки.</div>
       <a id="dl-windows" class="btn-download loading" href="#" target="_blank">
         <span class="spinner" id="sp-windows"></span>
         <span id="lbl-windows">Завантаження...</span>
