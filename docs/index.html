@@ -603,6 +603,7 @@
       </div>
       <div class="card-note"><span>⚠</span> Якщо Windows Defender блокує — натисни «Детальніше» → «Все одно запустити».</div>
       <div class="card-note"><span>⚠</span> Не запускай Sekta.exe прямо з архіву і не копіюй його окремо: поруч мають лежати файли .dll і тека data. Помилка «…_plugin.dll was not found» означає, що їх бракує — розпакуй архів заново або віднови файли з карантину антивірусу й додай теку у винятки.</div>
+      <div class="card-note"><span>⚠</span> <b>Перед розпакуванням</b>: правою кнопкою по <code style="color:var(--text-dim);font-size:12px">sekta-windows.zip</code> → «Властивості» → постав галку «Розблокувати» → OK. Інакше Windows може не запустити застосунок: «Bad Image … _plugin.dll … 0xc0e90002». Якщо вже розпаковано — у PowerShell: <code style="color:var(--text-dim);font-size:12px">Get-ChildItem -LiteralPath 'C:\Sekta' -Recurse -File | Unblock-File</code>. Не допомогло — це Smart App Control: «Безпека Windows» → «Керування програмами та браузером» → «Smart App Control» → «Вимкнути» (на частині збірок Windows 11 увімкнути назад можна лише перевстановленням системи).</div>
       <a id="dl-windows" class="btn-download loading" href="#" target="_blank">
         <span class="spinner" id="sp-windows"></span>
         <span id="lbl-windows">Завантаження...</span>
