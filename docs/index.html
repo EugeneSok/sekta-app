@@ -372,7 +372,7 @@
     .cards {
       width: 100%;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 16px;
       margin-bottom: 72px;
     }
@@ -382,9 +382,6 @@
       .hero h1 { font-size: 34px; }
     }
 
-    @media (max-width: 900px) and (min-width: 681px) {
-      .cards { grid-template-columns: repeat(2, 1fr); }
-    }
 
     .card {
       background: rgba(27,32,22,.82);
@@ -417,6 +414,7 @@
     .card-icon.win { background: rgba(175,203,78,.15); }
     .card-icon.and { background: rgba(108,191,63,.15); }
     .card-icon.mac { background: rgba(199,205,184,.12); }
+    .card-icon.lin { background: rgba(215,10,83,.14); }
 
     .card-title {
       font-size: 17px;
@@ -578,7 +576,7 @@
       <img src="./logo.png" alt="Sekta">
     </div>
     <h1>SEKTA</h1>
-    <p>Захищений портал підрозділу. Один застосунок — Windows, Android та macOS.</p>
+    <p>Захищений портал підрозділу. Один застосунок — Windows, Android, macOS та Debian.</p>
     <div class="version-badge">
       <div class="version-dot"></div>
       <span id="version-label">Завантаження...</span>
@@ -647,6 +645,25 @@
         <span id="lbl-macos">Завантаження...</span>
       </a>
       <div class="file-size" id="sz-macos"></div>
+    </div>
+
+    <!-- Linux (Debian) -->
+    <div class="card">
+      <div class="card-icon lin">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M13.9 3.2c-2.9-.6-5.9 1.1-6.8 4-.8 2.5.3 5.3 2.7 6.5-.9.1-1.8-.3-2.4-.9.6 2.4 3 3.9 5.4 3.5-2.6 1.6-6 1.1-8-1.1.9 3.6 4.3 6.1 8 5.9 4.3-.2 7.5-3.9 7.3-8.2-.1-2.6-1.6-4.9-3.9-6.1 1.6 1.4 2.1 3.7 1.2 5.6-.7 1.5-2.3 2.4-3.9 2.2-1.7-.2-3-1.7-2.9-3.4.1-1.4 1.3-2.5 2.7-2.4 1 .1 1.7.9 1.7 1.9 0 .7-.6 1.3-1.3 1.3" stroke="#D70A53" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="card-title">Linux (Debian)</div>
+        <div class="card-desc">Пакет <code style="color:var(--text-dim);font-size:12px">.deb</code> для Debian 12+ (amd64). Лише розділ «Інструменти» — вхід контрольною фразою «Інструментів». Встановлення: <code style="color:var(--text-dim);font-size:12px">sudo apt install ./sekta-linux-amd64.deb</code> — apt сам підтягне залежності. Нові версії застосунок оновлює сам (запитає системний пароль).</div>
+      </div>
+      <div class="card-note"><span>⚠</span> Для kiosk-дисплея — <code style="color:var(--text-dim);font-size:12px">sekta-server-setup</code>, пункт «Sekta APP (Debian)»: поставить актуальну версію і запуск на весь екран.</div>
+      <a id="dl-linux" class="btn-download loading" href="#" target="_blank">
+        <span class="spinner" id="sp-linux"></span>
+        <span id="lbl-linux">Завантаження...</span>
+      </a>
+      <div class="file-size" id="sz-linux"></div>
     </div>
 
   </div>
@@ -793,16 +810,19 @@ function loadRelease() {
     .then(release => {
       document.getElementById('version-label').textContent = release.tag_name || '—';
       const a = release.assets || [];
-      const w = a.find(x => x.name.includes('windows'));
-      const d = a.find(x => x.name.includes('android'));
-      const m = a.find(x => x.name.includes('macos'));
+      const pick = k => a.find(x => x.name.includes(k) && !x.name.endsWith('.sha256'));
+      const w = pick('windows');
+      const d = pick('android');
+      const m = pick('macos');
+      const l = pick('linux');
       if (w) setReady('windows', w.browser_download_url, w.name, w.size); else setError('windows');
       if (d) setReady('android', d.browser_download_url, d.name, d.size); else setError('android');
       if (m) setReady('macos',   m.browser_download_url, m.name, m.size); else setError('macos');
+      if (l) setReady('linux',   l.browser_download_url, l.name, l.size); else setError('linux');
     })
     .catch(() => {
       document.getElementById('version-label').textContent = 'Помилка';
-      ['windows','android','macos'].forEach(setError);
+      ['windows','android','macos','linux'].forEach(setError);
     });
 }
 
