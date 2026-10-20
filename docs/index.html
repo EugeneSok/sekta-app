@@ -656,7 +656,7 @@
       </div>
       <div>
         <div class="card-title">Linux (Debian)</div>
-        <div class="card-desc">Пакет <code style="color:var(--text-dim);font-size:12px">.deb</code> для Debian 12+ (amd64). Лише розділ «Інструменти» — вхід контрольною фразою «Інструментів». Встановлення: <code style="color:var(--text-dim);font-size:12px">sudo apt install ./sekta-linux-amd64.deb</code> — apt сам підтягне залежності. Нові версії застосунок оновлює сам (запитає системний пароль).</div>
+        <div class="card-desc">Пакет <code style="color:var(--text-dim);font-size:12px">.deb</code> для Debian 12+: <b>amd64</b> (звичайний ПК) або <b>arm64</b> (Raspberry Pi 4/5 та інші ARM-машини; архітектуру покаже <code style="color:var(--text-dim);font-size:12px">dpkg --print-architecture</code>). Лише розділ «Інструменти» — вхід контрольною фразою «Інструментів». Встановлення: <code style="color:var(--text-dim);font-size:12px">sudo apt install ./sekta-linux-&lt;arch&gt;.deb</code> — apt сам підтягне залежності. Нові версії застосунок оновлює сам (запитає системний пароль).</div>
       </div>
       <div class="card-note"><span>⚠</span> Для kiosk-дисплея — <code style="color:var(--text-dim);font-size:12px">sekta-server-setup</code>, пункт «Sekta APP (Debian)»: поставить актуальну версію і запуск на весь екран.</div>
       <a id="dl-linux" class="btn-download loading" href="#" target="_blank">
@@ -664,6 +664,11 @@
         <span id="lbl-linux">Завантаження...</span>
       </a>
       <div class="file-size" id="sz-linux"></div>
+      <a id="dl-linuxarm" class="btn-download loading" href="#" target="_blank">
+        <span class="spinner" id="sp-linuxarm"></span>
+        <span id="lbl-linuxarm">Завантаження...</span>
+      </a>
+      <div class="file-size" id="sz-linuxarm"></div>
     </div>
 
   </div>
@@ -814,15 +819,17 @@ function loadRelease() {
       const w = pick('windows');
       const d = pick('android');
       const m = pick('macos');
-      const l = pick('linux');
+      const l = pick('linux-amd64');
+      const la = pick('linux-arm64');
       if (w) setReady('windows', w.browser_download_url, w.name, w.size); else setError('windows');
       if (d) setReady('android', d.browser_download_url, d.name, d.size); else setError('android');
       if (m) setReady('macos',   m.browser_download_url, m.name, m.size); else setError('macos');
       if (l) setReady('linux',   l.browser_download_url, l.name, l.size); else setError('linux');
+      if (la) setReady('linuxarm', la.browser_download_url, la.name, la.size); else setError('linuxarm');
     })
     .catch(() => {
       document.getElementById('version-label').textContent = 'Помилка';
-      ['windows','android','macos','linux'].forEach(setError);
+      ['windows','android','macos','linux','linuxarm'].forEach(setError);
     });
 }
 
