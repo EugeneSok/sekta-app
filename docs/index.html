@@ -6,692 +6,771 @@
   <meta name="description" content="Sekta — захищений портал підрозділу">
   <title>Sekta</title>
   <link rel="icon" type="image/png" href="./logo.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Space+Mono&display=swap" rel="stylesheet">
   <style>
+    /* Токени — з Sekta 2.0: packages/ui/src/theme.ts і tokens.css (напрям «Штаб»). */
     :root {
-      --bg0:         #0E1109;
-      --bg1:         #12160F;
-      --bg2:         #1B2016;
-      --bg-elev:     #232C1C;
-      --border:      #3A4728;
-      --border-soft: #2C3620;
-      --text:        #EFF1E7;
-      --text-dim:    #C7CDB8;
-      --text-muted:  #8A957A;
-      --text-subtle: #6C7B54;
-      --accent:      #AFCB4E;
-      --accent-hi:   #C1DC5F;
-      --accent-dim:  #8FAE2F;
-      --olive:       #333C29;
-      --on-accent:   #1B2016;
-      --green:       #6CBF3F;
-      --red:         #E5533C;
-      --yellow:      #E7C24A;
+      --bg:          #f3f4ef;
+      --panel:       #ffffff;
+      --panel-2:     #f7f8f4;
+      --ink:         #1b1f17;
+      --mute:        #596052;
+      --line:        #e2e5dc;
+      --field:       #d6dacd;
+      --hover:       #f1f4ea;
+      --accent:      #4f6a22;
+      --accent-hi:   #3d521a;
+      --on-accent:   #ffffff;
+      --accent-soft: rgba(79, 106, 34, .1);
+      --error:       #991b1b;
+      --rail:        #0f120e;
+      --rail-2:      #1a1e18;
+      --rail-ink:    #e9ece4;
+      --rail-mute:   #a0a796;
+      --rail-line:   rgba(255, 255, 255, .08);
+      --rail-accent: #a3b965;
+      --rail-accent-hi: #c5d68f;
+      --rail-on-accent: #141810;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color-scheme: light;
+    }
+    :root[data-theme="dark"] {
+      --bg:          #0d100c;
+      --panel:       #161a14;
+      --panel-2:     #1c2119;
+      --ink:         #e9ece4;
+      --mute:        #a0a796;
+      --line:        #2a2f27;
+      --field:       #3a4036;
+      --hover:       #1f251c;
+      --accent:      #a3b965;
+      --accent-hi:   #c5d68f;
+      --on-accent:   #141810;
+      --accent-soft: rgba(163, 185, 101, .16);
+      --error:       #ef8a80;
+      --rail:        #070906;
+      --rail-2:      #141812;
+      color-scheme: dark;
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-
     body {
-      background: var(--bg1);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      overflow-x: hidden;
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font);
+      -webkit-font-smoothing: antialiased;
     }
+    a { color: var(--accent); }
+    a:hover { color: var(--ink); }
+    button { font: inherit; color: inherit; cursor: pointer; }
+    h1, h2, h3, p, ol { margin: 0; }
+    code { font-family: var(--mono); font-size: 12.5px; }
+    svg { flex-shrink: 0; }
+    .mono { font-family: var(--mono); }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-    h1, .lock-title, .brand-name, .card-title {
-      font-family: 'Chakra Petch', -apple-system, sans-serif;
-    }
-
-    /* ── Topo canvas ─────────────────────────────── */
-    #topo {
-      position: fixed;
-      inset: 0;
-      width: 100%; height: 100%;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* ── Lock screen ─────────────────────────────── */
+    /* ── Вхід — як auth/web ─────────────────────── */
     #lock-screen {
       position: fixed;
       inset: 0;
       z-index: 100;
       display: flex;
-      flex-direction: column;
+      overflow-y: auto;
+      background:
+        radial-gradient(1200px 600px at 50% -10%, rgba(79, 106, 34, .22), transparent 60%),
+        var(--rail);
+    }
+    #lock-screen.hidden { display: none; }
+    .lock-col { width: 100%; max-width: 420px; margin: auto; padding: 32px 16px; }
+    .lock-brand {
+      display: flex;
       align-items: center;
       justify-content: center;
-      padding: 24px;
-      background: var(--bg0);
+      gap: 14px;
+      margin-bottom: 24px;
+      color: var(--rail-ink);
     }
-
-    #lock-screen.hidden { display: none; }
-
-    .lock-logo {
-      position: relative;
-      margin-bottom: 32px;
+    .lock-name { font-size: 26px; font-weight: 800; letter-spacing: .5px; line-height: 1.1; }
+    .lock-tag { font-size: 13px; opacity: .7; }
+    .lock-card { background: var(--panel); border-radius: 16px; box-shadow: 0 24px 60px rgba(0, 0, 0, .45); }
+    .lock-head { display: flex; align-items: center; gap: 12px; padding: 20px 24px 0; }
+    .lock-tile {
+      display: inline-flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+      color: var(--on-accent);
+      background: var(--accent);
     }
-
-    .lock-logo::before {
-      content: '';
-      position: absolute;
-      inset: -24px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(175,203,78,.20) 0%, transparent 70%);
-      animation: pulse 3s ease-in-out infinite;
-    }
-
-    .lock-logo img {
-      width: 84px; height: 84px;
-      border-radius: 20px;
-      position: relative;
-      box-shadow: 0 0 40px rgba(175,203,78,.22), 0 8px 24px rgba(0,0,0,.6);
-    }
-
-    .lock-title {
-      font-size: 30px;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      margin-bottom: 6px;
-      color: var(--text);
-    }
-
-    .lock-subtitle {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-bottom: 40px;
-    }
-
-    .lock-card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 28px;
-      width: 100%;
-      max-width: 360px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .lock-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .password-wrap {
-      position: relative;
-    }
-
+    .lock-title { font-size: 19px; font-weight: 700; line-height: 1.25; }
+    .lock-form { display: flex; flex-direction: column; gap: 14px; padding: 20px 24px 24px; }
+    .lock-field { display: flex; flex-direction: column; gap: 6px; }
+    .lock-field > label { font-size: 13px; font-weight: 600; }
+    .password-wrap { position: relative; }
     .password-input {
       width: 100%;
-      background: var(--bg0);
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 44px 12px 14px;
-      font-size: 15px;
-      color: var(--text);
+      height: 44px;
+      padding: 0 46px 0 12px;
+      border: 1px solid var(--field);
+      border-radius: 8px;
       outline: none;
-      transition: border-color .2s;
-      font-family: inherit;
+      background: transparent;
+      color: var(--ink);
+      font: inherit;
+      font-size: 15px;
+      transition: border-color .12s;
     }
-
-    .password-input:focus { border-color: var(--accent); }
-    .password-input.error { border-color: var(--red); animation: shake .35s ease; }
-
+    .password-input:focus { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+    .password-input.error { border-color: var(--error); animation: shake .35s ease; }
     @keyframes shake {
-      0%,100%{transform:translateX(0)}
-      20%    {transform:translateX(-8px)}
-      60%    {transform:translateX(8px)}
-      80%    {transform:translateX(-4px)}
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      60% { transform: translateX(8px); }
+      80% { transform: translateX(-4px); }
     }
-
     .toggle-eye {
       position: absolute;
-      right: 12px; top: 50%;
-      transform: translateY(-50%);
-      background: none; border: none;
-      cursor: pointer; padding: 4px;
-      color: var(--text-muted);
-      transition: color .2s;
+      top: 0;
+      right: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border: 0;
+      background: transparent;
+      color: var(--mute);
     }
-    .toggle-eye:hover { color: var(--text-dim); }
-
-    .error-msg {
-      font-size: 13px;
-      color: var(--red);
-      min-height: 18px;
-      transition: opacity .2s;
-    }
-
+    .toggle-eye:hover { color: var(--ink); }
+    .error-msg { font-size: 13px; color: var(--error); }
+    .error-msg:empty { display: none; }
+    .remember-row { display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 14px; cursor: pointer; }
+    .remember-row input { width: 18px; height: 18px; margin: 0; accent-color: var(--accent); }
     .btn-enter {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      height: 44px;
+      border: 0;
+      border-radius: 8px;
       background: var(--accent);
       color: var(--on-accent);
-      border: none;
-      border-radius: 10px;
-      padding: 13px;
       font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background .18s, transform .12s;
-      font-family: inherit;
+      font-weight: 600;
+      transition: background-color .15s;
     }
+    .btn-enter:hover { background: var(--accent-hi); }
+    .btn-enter:disabled { opacity: .6; cursor: default; }
 
-    .btn-enter:hover  { background: var(--accent-hi); }
-    .btn-enter:active { transform: scale(.97); }
-    .btn-enter:disabled { background: var(--bg-elev); color: var(--text-muted); cursor: default; }
+    /* ── Сторінка ───────────────────────────────── */
+    .page { display: flex; flex-wrap: wrap; min-height: 100vh; }
 
-    .remember-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .remember-row input[type=checkbox] {
-      width: 16px; height: 16px;
-      accent-color: var(--accent);
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    .remember-row label {
-      font-size: 13px;
-      color: var(--text-muted);
-      cursor: pointer;
-      user-select: none;
-    }
-
-    /* ── Page (main content) ─────────────────────── */
-    .page {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 960px;
-      padding: 0 24px;
+    .rail {
+      flex: 1 1 380px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-    }
-
-    /* ── Header ──────────────────────────────────── */
-    header {
-      width: 100%;
-      display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 24px 0 0;
+      gap: 40px;
+      padding: 28px 24px 20px;
+      color: var(--rail-ink);
+      background:
+        radial-gradient(760px 420px at 50% -8%, rgba(79, 106, 34, .34), transparent 62%),
+        var(--rail);
     }
+    .brand { display: flex; align-items: center; gap: 14px; padding: 0 8px; }
+    .brand img { width: 30px; height: 36px; object-fit: contain; }
+    .brand-text { display: flex; flex-direction: column; gap: 2px; }
+    .brand-name { font-size: 15px; font-weight: 700; letter-spacing: -.1px; }
+    .brand-tag { font-size: 11px; letter-spacing: .6px; color: var(--rail-mute); }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-    }
-
-    .brand img { width: 32px; height: 32px; border-radius: 8px; }
-
-    .brand-name {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text);
-      letter-spacing: 0.14em;
-    }
-
-    .header-right {
+    .hero { display: flex; flex-direction: column; gap: 24px; padding: 0 8px; }
+    .hero-text { display: flex; flex-direction: column; gap: 12px; }
+    .hero h1 { font-size: 38px; line-height: 1.1; font-weight: 800; letter-spacing: -.8px; text-wrap: balance; }
+    .hero p { font-size: 15px; line-height: 1.5; color: var(--rail-mute); text-wrap: pretty; }
+    .hero-action { display: flex; flex-direction: column; gap: 10px; }
+    .cta {
       display: flex;
       align-items: center;
       gap: 12px;
-    }
-
-    .btn-logout {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 6px 12px;
-      color: var(--text-muted);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      font-family: inherit;
-      transition: border-color .2s, color .2s;
-    }
-    .btn-logout:hover { border-color: var(--text-muted); color: var(--text-dim); }
-
-    .btn-present {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 6px 12px;
-      color: var(--accent);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-      font-family: inherit;
-      transition: border-color .2s, color .2s, background .2s;
-    }
-    .btn-present:hover { border-color: rgba(175,203,78,.55); background: rgba(175,203,78,.08); color: var(--accent-hi); }
-
-    /* ── Hero ────────────────────────────────────── */
-    .hero {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      padding: 72px 0 56px;
-    }
-
-    .logo-wrap {
-      position: relative;
-      margin-bottom: 24px;
-    }
-
-    .logo-wrap::before {
-      content: '';
-      position: absolute;
-      inset: -20px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(175,203,78,.22) 0%, transparent 70%);
-      animation: pulse 3s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%,100% { opacity:1; transform:scale(1); }
-      50%      { opacity:.6; transform:scale(1.08); }
-    }
-
-    .logo-wrap img {
-      width: 92px; height: 92px;
-      border-radius: 22px;
-      position: relative;
-      box-shadow: 0 0 40px rgba(175,203,78,.28), 0 8px 32px rgba(0,0,0,.6);
-    }
-
-    .hero h1 {
-      font-size: 46px;
-      font-weight: 700;
-      letter-spacing: 0.16em;
-      color: var(--text);
-      margin-bottom: 12px;
-    }
-
-    .hero p {
-      font-size: 15px;
-      color: var(--text-dim);
-      max-width: 420px;
-      line-height: 1.6;
-      margin-bottom: 20px;
-    }
-
-    .version-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 5px 14px;
-      font-size: 13px;
-      color: var(--text-dim);
-      font-family: 'Space Mono', monospace;
-    }
-
-    .version-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--accent);
-      animation: blink 2s ease-in-out infinite;
-    }
-
-    @keyframes blink {
-      0%,100% { opacity:1; }
-      50%      { opacity:.3; }
-    }
-
-    /* ── Cards ───────────────────────────────────── */
-    .cards {
-      width: 100%;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-      margin-bottom: 72px;
-    }
-
-    @media (max-width: 680px) {
-      .cards { grid-template-columns: 1fr; }
-      .hero h1 { font-size: 34px; }
-    }
-
-
-    .card {
-      background: rgba(27,32,22,.82);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 26px 22px 22px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      transition: border-color .2s, transform .2s, box-shadow .2s;
-    }
-
-    .card:hover {
-      border-color: rgba(175,203,78,.55);
-      transform: translateY(-3px);
-      box-shadow: 0 16px 40px rgba(0,0,0,.4), 0 0 0 1px rgba(175,203,78,.12);
-    }
-
-    .card-icon {
-      width: 48px; height: 48px;
+      min-height: 60px;
+      padding: 10px 18px;
       border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      color: var(--rail-on-accent);
+      background: var(--rail-accent);
+      text-decoration: none;
+      transition: background-color .15s;
     }
+    .cta:hover { color: var(--rail-on-accent); background: var(--rail-accent-hi); }
+    .cta:focus-visible { outline-color: var(--rail-accent); }
+    .cta-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .cta-title { font-size: 15px; font-weight: 700; }
+    .cta-sub { font-size: 12px; opacity: .78; overflow-wrap: anywhere; }
+    .release { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 0 2px; font-size: 13px; color: var(--rail-mute); }
+    .release .mono { color: var(--rail-ink); }
 
-    .card-icon svg { width: 28px; height: 28px; }
-    .card-icon.win { background: rgba(175,203,78,.15); }
-    .card-icon.and { background: rgba(108,191,63,.15); }
-    .card-icon.mac { background: rgba(199,205,184,.12); }
-    .card-icon.lin { background: rgba(215,10,83,.14); }
-
-    .card-title {
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--text);
-      letter-spacing: 0.04em;
-    }
-
-    .card-desc {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.5;
-      flex: 1;
-    }
-
-    .card-note {
-      font-size: 11px;
-      color: var(--text-muted);
-      background: var(--bg0);
-      border: 1px solid var(--border-soft);
-      border-radius: 6px;
-      padding: 6px 10px;
-      line-height: 1.4;
-    }
-
-    .card-note span { color: var(--yellow); font-weight: 600; }
-
-    .btn-download {
-      display: flex;
+    .rail-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; padding-top: 12px; border-top: 1px solid var(--rail-line); }
+    .rail-btn {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      background: var(--accent);
-      color: var(--on-accent);
-      text-decoration: none;
+      min-width: 44px;
+      min-height: 44px;
+      padding: 0 12px;
+      border: 0;
       border-radius: 10px;
-      padding: 11px 20px;
-      font-size: 14px;
-      font-weight: 700;
-      transition: background .18s, transform .12s;
-    }
-
-    .btn-download:hover  { background: var(--accent-hi); }
-    .btn-download:active { transform: scale(.97); }
-
-    .btn-download.loading {
-      background: var(--bg-elev);
-      color: var(--text-muted);
-      pointer-events: none;
-    }
-
-    .file-size {
-      font-size: 11px;
-      color: var(--text-muted);
-      text-align: center;
-      margin-top: -6px;
-      font-family: 'Space Mono', monospace;
-    }
-
-    /* ── Footer ──────────────────────────────────── */
-    .divider {
-      width: 100%;
-      height: 1px;
-      background: linear-gradient(to right, transparent, var(--border), transparent);
-      margin-bottom: 28px;
-    }
-
-    footer {
-      padding: 0 0 36px;
+      background: transparent;
+      color: var(--rail-mute);
       font-size: 13px;
-      color: var(--text-muted);
+      font-weight: 500;
+      text-decoration: none;
+      transition: background-color .12s, color .12s;
+    }
+    .rail-btn:hover { background: var(--rail-2); color: var(--rail-ink); }
+    .rail-btn:focus-visible { outline-color: var(--rail-accent); }
+    #btn-theme { padding: 0; }
+    #btn-logout { margin-left: auto; }
+    :root[data-theme="dark"] .icon-moon, :root:not([data-theme="dark"]) .icon-sun { display: none; }
+
+    .work {
+      flex: 999 1 560px;
+      min-width: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
+      padding: clamp(20px, 4vw, 48px) clamp(16px, 4vw, 48px);
+    }
+    .work-col { width: 100%; max-width: 860px; display: flex; flex-direction: column; gap: 20px; }
+    .work-head { display: flex; flex-direction: column; gap: 4px; }
+    .work-head h2 { font-size: 22px; font-weight: 700; letter-spacing: -.3px; }
+    .work-head p { font-size: 14px; color: var(--mute); }
+
+    .tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 10px; }
+    .tab {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      min-height: 92px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      text-align: left;
+      transition: border-color .12s, background-color .12s;
+    }
+    .tab:hover { border-color: var(--mute); }
+    .tab[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent); }
+    .tab-text { display: flex; flex-direction: column; gap: 2px; }
+    .tab-name { font-size: 14px; font-weight: 700; }
+    .tab-badge { font-family: var(--mono); font-size: 12px; color: var(--mute); min-height: 15px; }
+
+    .card { border: 1px solid var(--line); border-radius: 16px; background: var(--panel); overflow: hidden; }
+    .card-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4px 10px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel-2);
+    }
+    .card-head h3 { margin-right: auto; font-size: 15px; font-weight: 700; letter-spacing: -.2px; }
+    .card-head span { font-size: 13px; color: var(--mute); }
+
+    .file { display: flex; flex-direction: column; gap: 10px; padding: 16px 20px; border-bottom: 1px solid var(--line); }
+    .file-top { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+    .file-text { display: flex; flex-direction: column; gap: 2px; flex: 1 1 220px; min-width: 0; }
+    .file-name { font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
+    .file-meta { font-size: 13px; color: var(--mute); }
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 10px;
+      background: var(--accent);
+      color: var(--on-accent);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background-color .15s;
+    }
+    .btn-download:hover { background: var(--accent-hi); color: var(--on-accent); }
+    .file-sha { display: flex; align-items: center; gap: 10px; }
+    .file-sha > span { flex: 1 1 auto; min-width: 0; font-size: 12px; line-height: 1.45; color: var(--mute); overflow-wrap: anywhere; }
+    .btn-copy {
+      flex: 0 0 auto;
+      min-height: 44px;
+      padding: 0 12px;
+      border: 1px solid var(--field);
+      border-radius: 10px;
+      background: var(--panel);
+      font-size: 13px;
+      font-weight: 600;
+      transition: background-color .12s;
+    }
+    .btn-copy:hover { background: var(--hover); }
+
+    .note {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--line);
+      background: var(--accent-soft);
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
+    .note svg { margin-top: 2px; }
+
+    .section-label { font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--mute); }
+    .steps-wrap { display: flex; flex-direction: column; gap: 14px; padding: 18px 20px; }
+    .steps { display: flex; flex-direction: column; gap: 14px; padding: 0; list-style: none; }
+    .step { display: flex; align-items: flex-start; gap: 12px; }
+    .step-n {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .step-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; padding-top: 2px; }
+    .step-title { font-size: 14px; font-weight: 600; }
+    .step-desc, .issue-text { font-size: 13.5px; line-height: 1.5; color: var(--mute); text-wrap: pretty; }
+    .cmd {
+      display: block;
+      margin-top: 5px;
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-2);
+      overflow-x: auto;
+      white-space: pre;
     }
 
-    footer a { color: var(--text-muted); text-decoration: none; transition: color .2s; }
-    footer a:hover { color: var(--text-dim); }
-
-    .spinner {
-      width: 15px; height: 15px;
-      border: 2px solid rgba(27,32,22,.35);
-      border-top-color: var(--on-accent);
-      border-radius: 50%;
-      animation: spin .7s linear infinite;
-      display: inline-block;
-      flex-shrink: 0;
+    .issues { display: flex; flex-direction: column; gap: 6px; padding: 16px 20px 8px; border-top: 1px solid var(--line); }
+    .issues details + details { border-top: 1px solid var(--line); }
+    .issues summary {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 44px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      list-style: none;
     }
+    .issues summary::-webkit-details-marker { display: none; }
+    .issues summary:hover { color: var(--accent); }
+    .chev { color: var(--mute); transition: transform .15s; }
+    .issues details[open] .chev { transform: rotate(90deg); }
+    .issue-body { display: flex; flex-direction: column; gap: 3px; padding: 0 0 14px 24px; }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
+    footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; font-size: 13px; color: var(--mute); }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
   </style>
+  <script>
+    // Вибір теми той самий, що в Sekta 2.0: памʼятає браузер, без вибору — як у системі.
+    (function () {
+      var saved = null;
+      try { saved = localStorage.getItem('sekta.theme'); } catch (e) {}
+      var dark = saved === 'sektaDark' || (saved !== 'sekta' && matchMedia('(prefers-color-scheme: dark)').matches);
+      if (dark) document.documentElement.setAttribute('data-theme', 'dark');
+    })();
+  </script>
 </head>
 <body>
 
-<canvas id="topo"></canvas>
-
-<!-- ── Lock screen ────────────────────────────────────────────────────── -->
+<!-- ── Вхід ───────────────────────────────────────────────────────────────── -->
 <div id="lock-screen">
-  <div class="lock-logo">
-    <img src="./logo.png" alt="Sekta">
-  </div>
-  <div class="lock-title">SEKTA</div>
-  <div class="lock-subtitle">Введіть пароль для доступу</div>
-
-  <div class="lock-card">
-    <div class="lock-label">Пароль</div>
-
-    <div class="password-wrap">
-      <input id="pwd-input" class="password-input" type="password"
-             placeholder="••••••••" autocomplete="current-password">
-      <button class="toggle-eye" id="toggle-eye" type="button" tabindex="-1" aria-label="Показати пароль">
-        <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-          <circle cx="12" cy="12" r="3"/>
-        </svg>
-      </button>
+  <div class="lock-col">
+    <div class="lock-brand">
+      <img src="./logo-mark.png" alt="" width="52" height="64" style="object-fit:contain">
+      <div>
+        <div class="lock-name">Sekta</div>
+        <div class="lock-tag">Застосунок</div>
+      </div>
     </div>
 
-    <div class="error-msg" id="error-msg"></div>
+    <div class="lock-card">
+      <div class="lock-head">
+        <span class="lock-tile">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        </span>
+        <h1 class="lock-title">Доступ до завантажень</h1>
+      </div>
 
-    <div class="remember-row">
-      <input type="checkbox" id="remember" checked>
-      <label for="remember">Запам'ятати на цьому пристрої</label>
+      <div class="lock-form">
+        <div class="lock-field">
+          <label for="pwd-input">Пароль</label>
+          <div class="password-wrap">
+            <input id="pwd-input" class="password-input" type="password" autocomplete="current-password">
+            <button class="toggle-eye" id="toggle-eye" type="button" aria-label="Показати пароль">
+              <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="error-msg" id="error-msg" role="alert"></div>
+
+        <label class="remember-row">
+          <input type="checkbox" id="remember" checked>
+          Запамʼятати на цьому пристрої
+        </label>
+
+        <button class="btn-enter" id="btn-enter" type="button">Увійти</button>
+      </div>
     </div>
-
-    <button class="btn-enter" id="btn-enter" type="button">
-      Увійти
-    </button>
   </div>
 </div>
 
-<!-- ── Main page ──────────────────────────────────────────────────────── -->
+<!-- ── Сторінка ───────────────────────────────────────────────────────────── -->
 <div class="page" id="main-page" style="display:none">
 
-  <header>
-    <a href="." class="brand">
-      <img src="./logo.png" alt="Sekta logo">
-      <span class="brand-name">SEKTA</span>
+  <aside class="rail">
+    <a class="brand" href="." style="color:inherit;text-decoration:none">
+      <img src="./logo-mark.png" alt="">
+      <span class="brand-text">
+        <span class="brand-name">Sekta</span>
+        <span class="brand-tag mono">SEKTA · APP</span>
+      </span>
     </a>
-    <div class="header-right">
-      <a class="btn-present" href="./presentation.html">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
-        </svg>
+
+    <div class="hero">
+      <div class="hero-text">
+        <h1>Захищений портал підрозділу</h1>
+        <p>Один застосунок — Windows, Android, macOS та Debian.</p>
+      </div>
+      <div class="hero-action">
+        <a class="cta" id="cta" href="#platforms">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg>
+          <span class="cta-text">
+            <span class="cta-title" id="cta-title">Оберіть систему</span>
+            <span class="cta-sub mono" id="cta-sub"></span>
+          </span>
+        </a>
+        <div class="release">
+          <span class="mono" id="version-label">—</span>
+          <span id="release-date"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rail-foot">
+      <a class="rail-btn" href="./presentation.html">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
         Презентація
       </a>
-      <button class="btn-logout" id="btn-logout" type="button">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
-        </svg>
+      <button class="rail-btn" id="btn-theme" type="button" aria-label="Змінити тему">
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="rail-btn" id="btn-logout" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
         Вийти
       </button>
     </div>
-  </header>
+  </aside>
 
-  <section class="hero">
-    <div class="logo-wrap">
-      <img src="./logo.png" alt="Sekta">
+  <main class="work" id="platforms">
+    <div class="work-col">
+      <div class="work-head">
+        <h2>Завантаження</h2>
+        <p>Оберіть систему: файл, встановлення й рішення типових проблем — в одному місці.</p>
+      </div>
+
+      <div class="tabs" role="group" aria-label="Система">
+        <button class="tab" type="button" data-platform="windows" aria-pressed="false">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5.6 10.5 4.5v7H3zM11.5 4.35 21 3v8.5h-9.5zM3 12.5h7.5v7L3 18.4zM11.5 12.5H21V21l-9.5-1.35z"/></svg>
+          <span class="tab-text"><span class="tab-name">Windows</span><span class="tab-badge"></span></span>
+        </button>
+        <button class="tab" type="button" data-platform="macos" aria-pressed="false">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 22C7.78 22.05 6.8 20.68 5.96 19.47C4.25 17 2.94 12.45 4.7 9.39C5.57 7.87 7.13 6.91 8.82 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
+          <span class="tab-text"><span class="tab-name">macOS</span><span class="tab-badge"></span></span>
+        </button>
+        <button class="tab" type="button" data-platform="android" aria-pressed="false">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 18C6 18.55 6.45 19 7 19H8V22C8 22.55 8.45 23 9 23S10 22.55 10 22V19H14V22C14 22.55 14.45 23 15 23S16 22.55 16 22V19H17C17.55 19 18 18.55 18 18V9H6V18ZM3.5 9C2.67 9 2 9.67 2 10.5V17.5C2 18.33 2.67 19 3.5 19S5 18.33 5 17.5V10.5C5 9.67 4.33 9 3.5 9ZM20.5 9C19.67 9 19 9.67 19 10.5V17.5C19 18.33 19.67 19 20.5 19S22 18.33 22 17.5V10.5C22 9.67 21.33 9 20.5 9ZM15.53 2.16L16.84.85C17.03.66 17.03.38 16.84.19 16.65 0 16.37 0 16.18.19L14.7 1.67C13.83 1.25 12.94 1 12 1S10.17 1.25 9.3 1.67L7.82.19C7.63 0 7.35 0 7.16.19 6.97.38 6.97.66 7.16.85L8.47 2.16C6.97 3.07 6 4.62 6 6.5V7H18V6.5C18 4.62 17.03 3.07 15.53 2.16ZM10 5H9V4H10V5ZM15 5H14V4H15V5Z"/></svg>
+          <span class="tab-text"><span class="tab-name">Android</span><span class="tab-badge"></span></span>
+        </button>
+        <button class="tab" type="button" data-platform="linux" aria-pressed="false">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.9 3.2c-2.9-.6-5.9 1.1-6.8 4-.8 2.5.3 5.3 2.7 6.5-.9.1-1.8-.3-2.4-.9.6 2.4 3 3.9 5.4 3.5-2.6 1.6-6 1.1-8-1.1.9 3.6 4.3 6.1 8 5.9 4.3-.2 7.5-3.9 7.3-8.2-.1-2.6-1.6-4.9-3.9-6.1 1.6 1.4 2.1 3.7 1.2 5.6-.7 1.5-2.3 2.4-3.9 2.2-1.7-.2-3-1.7-2.9-3.4.1-1.4 1.3-2.5 2.7-2.4 1 .1 1.7.9 1.7 1.9 0 .7-.6 1.3-1.3 1.3"/></svg>
+          <span class="tab-text"><span class="tab-name">Linux (Debian)</span><span class="tab-badge"></span></span>
+        </button>
+      </div>
+
+      <section class="card" id="platform-card"></section>
+
+      <footer>
+        <span>SEKTA · Внутрішній реліз</span>
+        <a href="https://github.com/EugeneSok/sekta-app/releases">Усі релізи</a>
+      </footer>
     </div>
-    <h1>SEKTA</h1>
-    <p>Захищений портал підрозділу. Один застосунок — Windows, Android, macOS та Debian.</p>
-    <div class="version-badge">
-      <div class="version-dot"></div>
-      <span id="version-label">Завантаження...</span>
-    </div>
-  </section>
-
-  <div class="cards">
-
-    <!-- Windows -->
-    <div class="card">
-      <div class="card-icon win">
-        <svg viewBox="0 0 24 24" fill="none">
-          <path d="M3 5.6L10.5 4.5V11.5H3V5.6Z" fill="#AFCB4E"/>
-          <path d="M11.5 4.35L21 3V11.5H11.5V4.35Z" fill="#AFCB4E"/>
-          <path d="M3 12.5H10.5V19.5L3 18.4V12.5Z" fill="#AFCB4E"/>
-          <path d="M11.5 12.5H21V21L11.5 19.65V12.5Z" fill="#AFCB4E"/>
-        </svg>
-      </div>
-      <div>
-        <div class="card-title">Windows</div>
-        <div class="card-desc">Портативний застосунок у <code style="color:var(--text-dim);font-size:12px">.zip</code> — встановлення не потрібне. Розпакуй <b>увесь</b> архів (правою кнопкою → «Видобути все…») у постійну теку (напр. <code style="color:var(--text-dim);font-size:12px">C:\Sekta</code>) і запускай <code style="color:var(--text-dim);font-size:12px">Sekta.exe</code> звідти; на робочий стіл — лише ярлик. Нові версії застосунок завантажує й розпаковує сам. Потребує Windows 10/11 та WebView2 Runtime.</div>
-      </div>
-      <div class="card-note"><span>⚠</span> Якщо Windows Defender блокує — натисни «Детальніше» → «Все одно запустити».</div>
-      <div class="card-note"><span>⚠</span> Не запускай Sekta.exe прямо з архіву і не копіюй його окремо: поруч мають лежати файли .dll і тека data. Помилка «…_plugin.dll was not found» означає, що їх бракує — розпакуй архів заново або віднови файли з карантину антивірусу й додай теку у винятки.</div>
-      <div class="card-note"><span>⚠</span> <b>Перед розпакуванням</b>: правою кнопкою по <code style="color:var(--text-dim);font-size:12px">sekta-windows.zip</code> → «Властивості» → постав галку «Розблокувати» → OK. Інакше Windows може не запустити застосунок: «Bad Image … _plugin.dll … 0xc0e90002». Якщо вже розпаковано — у PowerShell: <code style="color:var(--text-dim);font-size:12px">Get-ChildItem -LiteralPath 'C:\Sekta' -Recurse -File | Unblock-File</code>. Не допомогло — це Smart App Control: «Безпека Windows» → «Керування програмами та браузером» → «Smart App Control» → «Вимкнути» (на частині збірок Windows 11 увімкнути назад можна лише перевстановленням системи).</div>
-      <a id="dl-windows" class="btn-download loading" href="#" target="_blank">
-        <span class="spinner" id="sp-windows"></span>
-        <span id="lbl-windows">Завантаження...</span>
-      </a>
-      <div class="file-size" id="sz-windows"></div>
-    </div>
-
-    <!-- Android -->
-    <div class="card">
-      <div class="card-icon and">
-        <svg viewBox="0 0 24 24" fill="none">
-          <path d="M6 18C6 18.55 6.45 19 7 19H8V22C8 22.55 8.45 23 9 23S10 22.55 10 22V19H14V22C14 22.55 14.45 23 15 23S16 22.55 16 22V19H17C17.55 19 18 18.55 18 18V9H6V18ZM3.5 9C2.67 9 2 9.67 2 10.5V17.5C2 18.33 2.67 19 3.5 19S5 18.33 5 17.5V10.5C5 9.67 4.33 9 3.5 9ZM20.5 9C19.67 9 19 9.67 19 10.5V17.5C19 18.33 19.67 19 20.5 19S22 18.33 22 17.5V10.5C22 9.67 21.33 9 20.5 9ZM15.53 2.16L16.84.85C17.03.66 17.03.38 16.84.19 16.65 0 16.37 0 16.18.19L14.7 1.67C13.83 1.25 12.94 1 12 1S10.17 1.25 9.3 1.67L7.82.19C7.63 0 7.35 0 7.16.19 6.97.38 6.97.66 7.16.85L8.47 2.16C6.97 3.07 6 4.62 6 6.5V7H18V6.5C18 4.62 17.03 3.07 15.53 2.16ZM10 5H9V4H10V5ZM15 5H14V4H15V5Z" fill="#6CBF3F"/>
-        </svg>
-      </div>
-      <div>
-        <div class="card-title">Android</div>
-        <div class="card-desc">APK-файл для прямого встановлення. Android 6.0+.</div>
-      </div>
-      <div class="card-note"><span>⚠</span> Увімкни «Встановлення з невідомих джерел» перед встановленням.</div>
-      <a id="dl-android" class="btn-download loading" href="#" target="_blank">
-        <span class="spinner" id="sp-android"></span>
-        <span id="lbl-android">Завантаження...</span>
-      </a>
-      <div class="file-size" id="sz-android"></div>
-    </div>
-
-    <!-- macOS -->
-    <div class="card">
-      <div class="card-icon mac">
-        <svg viewBox="0 0 24 24" fill="none">
-          <path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 22C7.78 22.05 6.8 20.68 5.96 19.47C4.25 17 2.94 12.45 4.7 9.39C5.57 7.87 7.13 6.91 8.82 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z" fill="#C7CDB8"/>
-        </svg>
-      </div>
-      <div>
-        <div class="card-title">macOS</div>
-        <div class="card-desc">Портативний застосунок у <code style="color:var(--text-dim);font-size:12px">.zip</code>. Розпакуй архів і перетягни <code style="color:var(--text-dim);font-size:12px">Sekta.app</code> у теку <code style="color:var(--text-dim);font-size:12px">Програми</code>. Нові версії застосунок оновлює сам. macOS 12+.</div>
-      </div>
-      <div class="card-note"><span>⚠</span> Якщо macOS блокує відкриття — клікни правою кнопкою на <code style="font-size:12px">Sekta.app</code> → «Відкрити» → «Відкрити».</div>
-      <a id="dl-macos" class="btn-download loading" href="#" target="_blank">
-        <span class="spinner" id="sp-macos"></span>
-        <span id="lbl-macos">Завантаження...</span>
-      </a>
-      <div class="file-size" id="sz-macos"></div>
-    </div>
-
-    <!-- Linux (Debian) -->
-    <div class="card">
-      <div class="card-icon lin">
-        <svg viewBox="0 0 24 24" fill="none">
-          <path d="M13.9 3.2c-2.9-.6-5.9 1.1-6.8 4-.8 2.5.3 5.3 2.7 6.5-.9.1-1.8-.3-2.4-.9.6 2.4 3 3.9 5.4 3.5-2.6 1.6-6 1.1-8-1.1.9 3.6 4.3 6.1 8 5.9 4.3-.2 7.5-3.9 7.3-8.2-.1-2.6-1.6-4.9-3.9-6.1 1.6 1.4 2.1 3.7 1.2 5.6-.7 1.5-2.3 2.4-3.9 2.2-1.7-.2-3-1.7-2.9-3.4.1-1.4 1.3-2.5 2.7-2.4 1 .1 1.7.9 1.7 1.9 0 .7-.6 1.3-1.3 1.3" stroke="#D70A53" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <div>
-        <div class="card-title">Linux (Debian)</div>
-        <div class="card-desc">Пакет <code style="color:var(--text-dim);font-size:12px">.deb</code> для Debian 12+: <b>amd64</b> (звичайний ПК) або <b>arm64</b> (Raspberry Pi 4/5 та інші ARM-машини; архітектуру покаже <code style="color:var(--text-dim);font-size:12px">dpkg --print-architecture</code>). Лише розділ «Інструменти» — вхід контрольною фразою «Інструментів». Встановлення: <code style="color:var(--text-dim);font-size:12px">sudo apt install ./sekta-linux-&lt;arch&gt;.deb</code> — apt сам підтягне залежності. Нові версії застосунок оновлює сам (запитає системний пароль).</div>
-      </div>
-      <div class="card-note"><span>⚠</span> Для kiosk-дисплея — <code style="color:var(--text-dim);font-size:12px">sekta-server-setup</code>, пункт «Sekta APP (Debian)»: поставить актуальну версію і запуск на весь екран.</div>
-      <a id="dl-linux" class="btn-download loading" href="#" target="_blank">
-        <span class="spinner" id="sp-linux"></span>
-        <span id="lbl-linux">Завантаження...</span>
-      </a>
-      <div class="file-size" id="sz-linux"></div>
-      <a id="dl-linuxarm" class="btn-download loading" href="#" target="_blank">
-        <span class="spinner" id="sp-linuxarm"></span>
-        <span id="lbl-linuxarm">Завантаження...</span>
-      </a>
-      <div class="file-size" id="sz-linuxarm"></div>
-    </div>
-
-  </div>
-
-  <div class="divider"></div>
-
-  <footer>
-    <span>SEKTA · Внутрішній реліз</span>
-  </footer>
+  </main>
 
 </div>
 
 <script>
-// ─────────────────────────────────────────────────────────────────────────────
-// CONFIG — change PASSWORD_HASH to lock with a different password.
-// Generate new hash: https://emn178.github.io/online-tools/sha256.html
-// Current password: Omega
-// ─────────────────────────────────────────────────────────────────────────────
 const PASSWORD_HASH = '1c945ea0c6e24c67616f6aa99f7239bc3fc520a39aa573790a61289a72a9e799';
 const STORAGE_KEY   = 'sekta_auth_v1';
+const THEME_KEY     = 'sekta.theme';
 const REPO          = 'EugeneSok/sekta-app';
+const LATEST        = `https://github.com/${REPO}/releases/latest/download/`;
 
-// ── Auth ─────────────────────────────────────────────────────────────────────
+// ── Системи ──────────────────────────────────────────────────────────────────
+// Файл доступний за прямим посиланням ще до відповіді API: size і sha — лише доповнення.
+const PLATFORMS = {
+  windows: {
+    name: 'Windows',
+    req: 'Windows 10/11 · WebView2 Runtime',
+    files: [{ asset: 'sekta-windows.zip', meta: 'Портативний застосунок, встановлення не потрібне' }],
+    notes: [],
+    steps: [
+      { t: 'Розблокуй архів', d: 'Правою кнопкою по sekta-windows.zip → «Властивості» → галка «Розблокувати» → OK.' },
+      { t: 'Розпакуй увесь архів у постійну теку', d: 'Правою кнопкою → «Видобути все…», напр. у C:\\Sekta.' },
+      { t: 'Запусти Sekta.exe звідти', d: 'На робочий стіл — лише ярлик. Нові версії застосунок завантажує й розпаковує сам.' },
+    ],
+    issues: [
+      { q: 'Windows Defender блокує запуск', a: 'Натисни «Детальніше» → «Все одно запустити».' },
+      { q: 'Помилка «…_plugin.dll was not found»', a: 'Поруч із Sekta.exe бракує файлів .dll і теки data. Не запускай його з архіву й не копіюй окремо: розпакуй архів заново або віднови файли з карантину антивірусу й додай теку у винятки.' },
+      { q: 'Помилка «Bad Image … _plugin.dll … 0xc0e90002»', a: 'Архів розпаковано без розблокування. Виконай у PowerShell:', code: "Get-ChildItem -LiteralPath 'C:\\Sekta' -Recurse -File | Unblock-File" },
+      { q: 'Розблокування не допомогло', a: 'Це Smart App Control: «Безпека Windows» → «Керування програмами та браузером» → «Smart App Control» → «Вимкнути». На частині збірок Windows 11 увімкнути назад можна лише перевстановленням системи.' },
+    ],
+  },
+  macos: {
+    name: 'macOS',
+    req: 'macOS 12+',
+    files: [{ asset: 'sekta-macos.zip', meta: 'Портативний застосунок' }],
+    notes: [],
+    steps: [
+      { t: 'Розпакуй архів', d: 'Отримаєш Sekta.app.' },
+      { t: 'Перетягни Sekta.app у «Програми»', d: 'Нові версії застосунок оновлює сам.' },
+    ],
+    issues: [
+      { q: 'macOS блокує відкриття', a: 'Клікни правою кнопкою на Sekta.app → «Відкрити» → «Відкрити».' },
+    ],
+  },
+  android: {
+    name: 'Android',
+    req: 'Android 6.0+',
+    files: [{ asset: 'sekta-android.apk', meta: 'APK для прямого встановлення' }],
+    notes: [],
+    steps: [
+      { t: 'Увімкни «Встановлення з невідомих джерел»', d: 'Зроби це перед встановленням.' },
+      { t: 'Завантаж і відкрий APK', d: 'Підтвердь встановлення.' },
+    ],
+    issues: [],
+  },
+  linux: {
+    name: 'Linux (Debian)',
+    short: 'Debian',
+    req: 'Debian 12+',
+    files: [
+      { asset: 'sekta-linux-amd64.deb', meta: 'amd64 — звичайний ПК' },
+      { asset: 'sekta-linux-arm64.deb', meta: 'arm64 — Raspberry Pi 4/5 та інші ARM-машини' },
+    ],
+    notes: ['Лише розділ «Інструменти» — вхід контрольною фразою «Інструментів».'],
+    steps: [
+      { t: 'Дізнайся архітектуру', d: 'Команда покаже, який пакет потрібен.', code: 'dpkg --print-architecture' },
+      { t: 'Встанови пакет', d: 'apt сам підтягне залежності. Нові версії застосунок оновлює сам (запитає системний пароль).', code: 'sudo apt install ./sekta-linux-<arch>.deb' },
+      { t: 'Для kiosk-дисплея', d: 'sekta-server-setup, пункт «Sekta APP (Debian)»: поставить актуальну версію і запуск на весь екран.' },
+    ],
+    issues: [],
+  },
+};
+
+let detected = null;   // null — системи, для якої є збірка, не впізнано (напр. iPhone)
+let current  = 'windows';
+const release = {};    // asset → { url, size, sha }
+
+function detectPlatform() {
+  const ua = navigator.userAgent;
+  if (/Android/i.test(ua)) return 'android';
+  if (/iPhone|iPad|iPod/i.test(ua)) return null;
+  // iPadOS видає себе за Mac; відрізняємо за сенсорним екраном.
+  if (/Macintosh/i.test(ua)) return navigator.maxTouchPoints > 1 ? null : 'macos';
+  if (/Windows/i.test(ua)) return 'windows';
+  if (/Linux|X11/i.test(ua)) return 'linux';
+  return null;
+}
+
+// ── Малювання ────────────────────────────────────────────────────────────────
+function el(tag, cls, text) {
+  const node = document.createElement(tag);
+  if (cls) node.className = cls;
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+
+function svg(markup) {
+  const box = document.createElement('template');
+  box.innerHTML = markup;
+  return box.content.firstElementChild;
+}
+
+const ICON_DOWNLOAD = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg>';
+const ICON_INFO     = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>';
+const ICON_CHEVRON  = '<svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
+
+function fmt(bytes) {
+  if (!bytes) return '';
+  return bytes < 1048576
+    ? (bytes / 1024).toFixed(0).replace('.', ',') + ' КБ'
+    : (bytes / 1048576).toFixed(1).replace('.', ',') + ' МБ';
+}
+
+function fileUrl(asset) {
+  return release[asset]?.url || LATEST + asset;
+}
+
+function copySha(button, sha) {
+  const done = () => {
+    button.textContent = 'Скопійовано';
+    setTimeout(() => { button.textContent = 'Копіювати'; }, 1600);
+  };
+  if (navigator.clipboard) navigator.clipboard.writeText(sha).then(done).catch(() => {});
+}
+
+function renderFile(f) {
+  const info = release[f.asset] || {};
+  const row  = el('div', 'file');
+
+  const top  = el('div', 'file-top');
+  const text = el('div', 'file-text');
+  text.append(el('span', 'file-name mono', f.asset));
+  text.append(el('span', 'file-meta', [f.meta, fmt(info.size)].filter(Boolean).join(' · ')));
+  const link = el('a', 'btn-download');
+  link.href = fileUrl(f.asset);
+  link.append(svg(ICON_DOWNLOAD), 'Завантажити');
+  top.append(text, link);
+  row.append(top);
+
+  if (info.sha) {
+    const sha  = el('div', 'file-sha');
+    const copy = el('button', 'btn-copy', 'Копіювати');
+    copy.type = 'button';
+    copy.setAttribute('aria-label', `Скопіювати SHA-256 ${f.asset}`);
+    copy.addEventListener('click', () => copySha(copy, info.sha));
+    sha.append(el('span', 'mono', `SHA-256 ${info.sha}`), copy);
+    row.append(sha);
+  }
+  return row;
+}
+
+function renderCard() {
+  const p    = PLATFORMS[current];
+  const card = document.getElementById('platform-card');
+  card.setAttribute('aria-label', p.name);
+  card.replaceChildren();
+
+  const head = el('div', 'card-head');
+  head.append(el('h3', '', p.name), el('span', '', p.req));
+  card.append(head);
+
+  p.files.forEach(f => card.append(renderFile(f)));
+
+  p.notes.forEach(n => {
+    const note = el('div', 'note');
+    note.append(svg(ICON_INFO), el('span', '', n));
+    card.append(note);
+  });
+
+  const stepsWrap = el('div', 'steps-wrap');
+  stepsWrap.append(el('span', 'section-label', 'Встановлення'));
+  const steps = el('ol', 'steps');
+  p.steps.forEach((s, i) => {
+    const li = el('li', 'step');
+    const n  = el('span', 'step-n', String(i + 1));
+    n.setAttribute('aria-hidden', 'true');
+    const text = el('div', 'step-text');
+    text.append(el('span', 'step-title', s.t), el('span', 'step-desc', s.d));
+    if (s.code) text.append(el('code', 'cmd', s.code));
+    li.append(n, text);
+    steps.append(li);
+  });
+  stepsWrap.append(steps);
+  card.append(stepsWrap);
+
+  if (p.issues.length) {
+    const wrap = el('div', 'issues');
+    wrap.append(el('span', 'section-label', 'Якщо щось пішло не так'));
+    const list = el('div');
+    p.issues.forEach(x => {
+      const item = el('details');
+      const sum  = el('summary');
+      sum.append(svg(ICON_CHEVRON), el('span', '', x.q));
+      const body = el('div', 'issue-body');
+      body.append(el('span', 'issue-text', x.a));
+      if (x.code) body.append(el('code', 'cmd', x.code));
+      item.append(sum, body);
+      list.append(item);
+    });
+    wrap.append(list);
+    card.append(wrap);
+  }
+}
+
+function renderTabs() {
+  document.querySelectorAll('.tab').forEach(tab => {
+    const id = tab.dataset.platform;
+    tab.setAttribute('aria-pressed', String(id === current));
+    tab.querySelector('.tab-badge').textContent =
+      id === detected ? 'Ваша система' : fmt(release[PLATFORMS[id].files[0].asset]?.size);
+  });
+}
+
+function renderCta() {
+  const cta = document.getElementById('cta');
+  if (!detected) return;
+  const p = PLATFORMS[detected];
+  const f = p.files[0];
+  document.getElementById('cta-title').textContent = `Завантажити для ${p.short || p.name}`;
+  // Архітектуру Linux браузер не каже надійно: вибір лишаємо людині.
+  if (p.files.length > 1) {
+    document.getElementById('cta-sub').textContent = 'amd64 чи arm64 — нижче';
+    return;
+  }
+  cta.href = fileUrl(f.asset);
+  document.getElementById('cta-sub').textContent =
+    [f.asset, fmt(release[f.asset]?.size)].filter(Boolean).join(' · ');
+}
+
+function renderAll() {
+  renderTabs();
+  renderCard();
+  renderCta();
+}
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    current = tab.dataset.platform;
+    renderTabs();
+    renderCard();
+  });
+});
+
+// ── Вхід ─────────────────────────────────────────────────────────────────────
 async function sha256(str) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
@@ -721,7 +800,7 @@ async function tryLogin() {
   if (!pwd) return;
 
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Перевірка...';
+  btn.textContent = 'Перевірка…';
   errorEl.textContent = '';
 
   const hash = await sha256(pwd);
@@ -746,20 +825,21 @@ function showMainPage() {
   loadRelease();
 }
 
-// ── Eye toggle ───────────────────────────────────────────────────────────────
 document.getElementById('toggle-eye').addEventListener('click', () => {
   const input = document.getElementById('pwd-input');
+  const btn   = document.getElementById('toggle-eye');
   const icon  = document.getElementById('eye-icon');
   if (input.type === 'password') {
     input.type = 'text';
+    btn.setAttribute('aria-label', 'Сховати пароль');
     icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
   } else {
     input.type = 'password';
+    btn.setAttribute('aria-label', 'Показати пароль');
     icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
   }
 });
 
-// ── Keyboard ─────────────────────────────────────────────────────────────────
 document.getElementById('pwd-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') tryLogin();
 });
@@ -771,123 +851,52 @@ document.getElementById('btn-logout').addEventListener('click', () => {
   location.reload();
 });
 
-// ── Init ─────────────────────────────────────────────────────────────────────
-if (isAuthenticated()) {
-  showMainPage();
-} else {
-  document.getElementById('lock-screen').style.display = '';
-  setTimeout(() => document.getElementById('pwd-input').focus(), 50);
-}
+// ── Тема ─────────────────────────────────────────────────────────────────────
+document.getElementById('btn-theme').addEventListener('click', () => {
+  const root = document.documentElement;
+  const dark = root.getAttribute('data-theme') !== 'dark';
+  if (dark) root.setAttribute('data-theme', 'dark');
+  else root.removeAttribute('data-theme');
+  try {
+    localStorage.setItem(THEME_KEY, dark ? 'sektaDark' : 'sekta');
+  } catch (e) {
+    // приватне вікно / заблоковане сховище — лише до перезавантаження
+  }
+});
 
-// ── GitHub Releases ───────────────────────────────────────────────────────────
-function fmt(bytes) {
-  if (!bytes) return '';
-  return bytes < 1048576
-    ? (bytes/1024).toFixed(0)+' KB'
-    : (bytes/1048576).toFixed(1)+' MB';
-}
-
-function setReady(id, url, name, size) {
-  const btn = document.getElementById('dl-'+id);
-  const lbl = document.getElementById('lbl-'+id);
-  const sp  = document.getElementById('sp-'+id);
-  const sz  = document.getElementById('sz-'+id);
-  btn.href  = url;
-  btn.classList.remove('loading');
-  lbl.textContent = name;
-  if (sp) sp.remove();
-  if (size) sz.textContent = fmt(size);
-}
-
-function setError(id) {
-  const btn = document.getElementById('dl-'+id);
-  const sp  = document.getElementById('sp-'+id);
-  const lbl = document.getElementById('lbl-'+id);
-  if (sp) sp.remove();
-  btn.classList.remove('loading');
-  lbl.textContent = 'Відкрити реліз';
-  btn.href = `https://github.com/${REPO}/releases/latest`;
-}
-
+// ── GitHub Releases ──────────────────────────────────────────────────────────
 function loadRelease() {
   fetch(`https://api.github.com/repos/${REPO}/releases/latest`)
     .then(r => { if (!r.ok) throw r.status; return r.json(); })
-    .then(release => {
-      document.getElementById('version-label').textContent = release.tag_name || '—';
-      const a = release.assets || [];
-      const pick = k => a.find(x => x.name.includes(k) && !x.name.endsWith('.sha256'));
-      const w = pick('windows');
-      const d = pick('android');
-      const m = pick('macos');
-      const l = pick('linux-amd64');
-      const la = pick('linux-arm64');
-      if (w) setReady('windows', w.browser_download_url, w.name, w.size); else setError('windows');
-      if (d) setReady('android', d.browser_download_url, d.name, d.size); else setError('android');
-      if (m) setReady('macos',   m.browser_download_url, m.name, m.size); else setError('macos');
-      if (l) setReady('linux',   l.browser_download_url, l.name, l.size); else setError('linux');
-      if (la) setReady('linuxarm', la.browser_download_url, la.name, la.size); else setError('linuxarm');
+    .then(data => {
+      document.getElementById('version-label').textContent = data.tag_name || '—';
+      if (data.published_at) {
+        document.getElementById('release-date').textContent =
+          'реліз ' + new Date(data.published_at).toLocaleDateString('uk-UA');
+      }
+      (data.assets || []).forEach(a => {
+        if (a.name.endsWith('.sha256')) return;
+        const sha = (a.digest || '').startsWith('sha256:') ? a.digest.slice(7) : '';
+        release[a.name] = { url: a.browser_download_url, size: a.size, sha };
+      });
+      renderAll();
     })
     .catch(() => {
-      document.getElementById('version-label').textContent = 'Помилка';
-      ['windows','android','macos','linux','linuxarm'].forEach(setError);
+      // API недоступне (ліміт запитів): прямі посилання на останній реліз усе одно працюють.
+      document.getElementById('version-label').textContent = 'Останній реліз';
     });
 }
 
-// ── Topo canvas ───────────────────────────────────────────────────────────────
-(function() {
-  const cv = document.getElementById('topo');
-  const cx = cv.getContext('2d');
-  const base = Array.from({length:256},(_,i)=>i);
-  let seed = 12345;
-  const rng = () => { seed=(Math.imul(seed,1664525)+1013904223)|0; return(seed>>>0)/0x100000000; };
-  for(let i=255;i>0;i--){const j=Math.floor(rng()*(i+1));[base[i],base[j]]=[base[j],base[i]];}
-  const P=[...base,...base];
-  const fade=t=>t*t*t*(t*(t*6-15)+10);
-  const lerp=(a,b,t)=>a+t*(b-a);
-  const grad=(h,x,y)=>{const v=h&3,u=v<2?x:y,w=v<2?y:x;return((h&1)?-u:u)+((h&2)?-w:w);};
-  function noise(xi,yi){
-    const X=Math.floor(xi)&255,Y=Math.floor(yi)&255;
-    const xf=xi-Math.floor(xi),yf=yi-Math.floor(yi);
-    const u=fade(xf),v=fade(yf),a=P[X]+Y,b=P[X+1]+Y;
-    return lerp(lerp(grad(P[a],xf,yf),grad(P[b],xf-1,yf),u),lerp(grad(P[a+1],xf,yf-1),grad(P[b+1],xf-1,yf-1),u),v);
-  }
-  function fbm(x,y){let v=0,a=1,f=1,m=0;for(let i=0;i<3;i++){v+=a*noise(x*f+22.8,y*f+15.1);m+=a;a*=0.45;f*=1.7;}return v/m;}
-  function elev(nx,ny){return Math.max(0,Math.min(1,(fbm(nx,ny)+0.8)/1.2));}
-  function draw(){
-    const W=window.innerWidth,H=window.innerHeight;
-    cv.width=W;cv.height=H;
-    cx.fillStyle='#12160F';cx.fillRect(0,0,W,H);
-    const gx=120,gy=Math.max(160,Math.round(H/W*gx));
-    const g=new Float32Array((gx+1)*(gy+1));
-    for(let j=0;j<=gy;j++)for(let i=0;i<=gx;i++)g[j*(gx+1)+i]=elev(i/gx,j/gy);
-    const cw=W/gx,ch=H/gy;
-    for(let l=1;l<22;l++){
-      const t=l/22,isI=l%5===0;
-      cx.beginPath();
-      cx.strokeStyle=`rgba(175,203,78,${isI?.42:.20})`;
-      cx.lineWidth=isI?1.5:.9;
-      for(let j=0;j<gy;j++){for(let i=0;i<gx;i++){
-        const v00=g[j*(gx+1)+i],v10=g[j*(gx+1)+i+1],v01=g[(j+1)*(gx+1)+i],v11=g[(j+1)*(gx+1)+i+1];
-        const x=i*cw,y=j*ch,lr=(a,b)=>b===a?0:(t-a)/(b-a),pts=[];
-        if((v00>t)!==(v10>t))pts.push([x+lr(v00,v10)*cw,y]);
-        if((v10>t)!==(v11>t))pts.push([x+cw,y+lr(v10,v11)*ch]);
-        if((v01>t)!==(v11>t))pts.push([x+lr(v01,v11)*cw,y+ch]);
-        if((v00>t)!==(v01>t))pts.push([x,y+lr(v00,v01)*ch]);
-        if(pts.length>=2){cx.moveTo(pts[0][0],pts[0][1]);cx.lineTo(pts[1][0],pts[1][1]);}
-        if(pts.length===4){cx.moveTo(pts[2][0],pts[2][1]);cx.lineTo(pts[3][0],pts[3][1]);}
-      }}
-      cx.stroke();
-    }
-    cx.setLineDash([2,10]);cx.strokeStyle='rgba(175,203,78,0.09)';cx.lineWidth=0.5;
-    for(let n=1;n<=3;n++){
-      cx.beginPath();cx.moveTo(W*n/4,0);cx.lineTo(W*n/4,H);cx.stroke();
-      cx.beginPath();cx.moveTo(0,H*n/4);cx.lineTo(W,H*n/4);cx.stroke();
-    }
-    cx.setLineDash([]);
-  }
-  draw();
-  window.addEventListener('resize',()=>{clearTimeout(window._t);window._t=setTimeout(draw,150);});
-})();
+// ── Старт ────────────────────────────────────────────────────────────────────
+detected = detectPlatform();
+if (detected) current = detected;
+renderAll();
+
+if (isAuthenticated()) {
+  showMainPage();
+} else {
+  setTimeout(() => document.getElementById('pwd-input').focus(), 50);
+}
 </script>
 </body>
 </html>
